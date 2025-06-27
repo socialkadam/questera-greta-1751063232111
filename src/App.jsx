@@ -2,31 +2,27 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import Recipes from './pages/Recipes';
-import Categories from './pages/Categories';
-import CategoryRecipes from './pages/CategoryRecipes';
+import Wizards from './pages/Wizards';
 import About from './pages/About';
+import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
-import RecipeDetail from './pages/RecipeDetail';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-wizardoo-neutral-50">
           <Navbar />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/recipes" element={<Recipes />} />
-              <Route path="/recipes/:id" element={<RecipeDetail />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/categories/:category" element={<CategoryRecipes />} />
+              <Route path="/wizards" element={<Wizards />} />
               <Route path="/about" element={<About />} />
+              <Route path="/blog" element={<Blog />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

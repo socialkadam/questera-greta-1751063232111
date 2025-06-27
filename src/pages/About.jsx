@@ -1,31 +1,119 @@
+import { motion } from 'framer-motion';
+import { FaHeart, FaUsers, FaStar, FaGlobe } from 'react-icons/fa';
+
 function About() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="max-w-3xl mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-8">About Foodie's Delight</h1>
-        <img
-          src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-          alt="Chef cooking"
-          className="w-full h-96 object-cover rounded-lg mb-8"
-        />
-        <p className="text-lg text-gray-600 mb-6">
-          Welcome to Foodie's Delight, where passion for cooking meets the joy of sharing! Created by Sarah, 
-          a passionate home cook with over 15 years of culinary experience, this platform aims to bring 
-          together food lovers from all around the world.
-        </p>
-        <p className="text-lg text-gray-600 mb-6">
-          Our mission is simple: to make cooking accessible, enjoyable, and inspiring for everyone. Whether 
-          you're a beginner or an experienced chef, you'll find recipes that suit your skill level and taste 
-          preferences.
-        </p>
-        <div className="bg-orange-50 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Our Values</h2>
-          <ul className="text-left list-disc list-inside space-y-2">
-            <li>Quality recipes tested in real home kitchens</li>
-            <li>Clear, easy-to-follow instructions</li>
-            <li>Community-driven sharing and feedback</li>
-            <li>Celebration of diverse culinary traditions</li>
-          </ul>
+    <div className="min-h-screen bg-kadam-off-white">
+      {/* Hero Section */}
+      <div className="kadam-gradient py-24">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="kadam-heading text-hero text-kadam-off-white mb-8"
+          >
+            About Wizardoo
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-2xl text-kadam-off-white max-w-3xl mx-auto kadam-body-medium"
+          >
+            Your Personal Transformation Engine
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="kadam-card-elevated p-12 md:p-16 mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-16"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" 
+                alt="Team collaboration" 
+                className="w-full h-96 object-cover rounded-3xl mb-12 shadow-medium"
+              />
+              <h2 className="kadam-heading text-display-md mb-8">Our Mission</h2>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed kadam-body">
+                At Wizardoo, we believe that everyone deserves access to transformational guidance. Our platform connects you with expert coaches, consultants, counselors, and mentors who are passionate about helping you unlock your full potential.
+              </p>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed kadam-body">
+                Through the power of AI-driven matching and human wisdom, we create meaningful connections that lead to lasting personal and professional transformation.
+              </p>
+            </motion.div>
+
+            {/* Values Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-kadam-light-green p-12 rounded-3xl"
+            >
+              <h2 className="kadam-heading text-display-md text-center mb-12">Our Values</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="text-center">
+                  <div className="bg-kadam-gold p-6 rounded-3xl inline-block mb-6">
+                    <FaHeart className="text-4xl text-kadam-deep-green" />
+                  </div>
+                  <h4 className="kadam-subheading text-xl mb-4">Authentic Connection</h4>
+                  <p className="kadam-body text-gray-600">We facilitate genuine relationships between seekers and guides</p>
+                </div>
+                <div className="text-center">
+                  <div className="bg-kadam-gold p-6 rounded-3xl inline-block mb-6">
+                    <FaUsers className="text-4xl text-kadam-deep-green" />
+                  </div>
+                  <h4 className="kadam-subheading text-xl mb-4">Community Focus</h4>
+                  <p className="kadam-body text-gray-600">Building a supportive ecosystem of growth and transformation</p>
+                </div>
+                <div className="text-center">
+                  <div className="bg-kadam-gold p-6 rounded-3xl inline-block mb-6">
+                    <FaStar className="text-4xl text-kadam-deep-green" />
+                  </div>
+                  <h4 className="kadam-subheading text-xl mb-4">Excellence</h4>
+                  <p className="kadam-body text-gray-600">Curated network of top-tier professionals and experts</p>
+                </div>
+                <div className="text-center">
+                  <div className="bg-kadam-gold p-6 rounded-3xl inline-block mb-6">
+                    <FaGlobe className="text-4xl text-kadam-deep-green" />
+                  </div>
+                  <h4 className="kadam-subheading text-xl mb-4">Global Accessibility</h4>
+                  <p className="kadam-body text-gray-600">Making transformation guidance available worldwide</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Stats Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="kadam-card-elevated p-12 md:p-16"
+          >
+            <h2 className="kadam-heading text-display-md text-center mb-12">
+              Transforming Lives Worldwide
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+              <div>
+                <div className="text-6xl font-bold text-kadam-gold mb-4 kadam-heading">5,000+</div>
+                <p className="text-gray-600 text-xl kadam-body-medium">Active Users</p>
+              </div>
+              <div>
+                <div className="text-6xl font-bold text-kadam-gold mb-4 kadam-heading">211</div>
+                <p className="text-gray-600 text-xl kadam-body-medium">Expert Wizards</p>
+              </div>
+              <div>
+                <div className="text-6xl font-bold text-kadam-gold mb-4 kadam-heading">98%</div>
+                <p className="text-gray-600 text-xl kadam-body-medium">Satisfaction Rate</p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>
