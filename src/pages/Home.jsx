@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import {motion,AnimatePresence} from 'framer-motion';
 import {useState} from 'react';
-import {FaSearch,FaArrowRight,FaUserTie,FaBrain,FaHeart,FaLightbulb,FaSpinner,FaMicrophone,FaCamera} from 'react-icons/fa';
+import {FaSearch,FaArrowRight,FaUserTie,FaBrain,FaHeart,FaLightbulb,FaSpinner} from 'react-icons/fa';
 import {getWizardRecommendation,getWizardDetailsByType} from '../api/gptMatch';
 import WizardRecommendation from '../components/WizardRecommendation';
 
@@ -10,7 +10,7 @@ const wizardTypes=[
     name: 'Coach',
     icon: FaUserTie,
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
-    path: '/wizards/coach',
+    path: '/wizards?type=coach',
     count: 45,
     description: 'Performance and goal achievement'
   },
@@ -18,7 +18,7 @@ const wizardTypes=[
     name: 'Consultant',
     icon: FaBrain,
     image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
-    path: '/wizards/consultant',
+    path: '/wizards?type=consultant',
     count: 58,
     description: 'Strategic problem solving'
   },
@@ -26,7 +26,7 @@ const wizardTypes=[
     name: 'Counselor',
     icon: FaHeart,
     image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
-    path: '/wizards/counselor',
+    path: '/wizards?type=counselor',
     count: 72,
     description: 'Emotional support and healing'
   },
@@ -34,7 +34,7 @@ const wizardTypes=[
     name: 'Mentor',
     icon: FaLightbulb,
     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60',
-    path: '/wizards/mentor',
+    path: '/wizards?type=mentor',
     count: 36,
     description: 'Wisdom and guidance'
   }
@@ -116,20 +116,20 @@ function Home() {
   return (
     <div className="min-h-screen bg-white">
       
-      {/* Hero Section with Title and Search */}
-      <div id="search-section" className="min-h-[80vh] flex flex-col justify-center items-center px-6">
+      {/* Hero Section with Title and Search - Dark Background */}
+      <div id="search-section" className="min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center px-4 sm:px-6" style={{backgroundColor: '#013d39'}}>
         <div className="max-w-4xl w-full text-center">
           
           {/* Main Heading */}
           <motion.div 
             initial={{opacity: 0,y: 30}} 
             animate={{opacity: 1,y: 0}} 
-            className="mb-8"
+            className="mb-6 sm:mb-8"
           >
-            <h1 className="kadam-heading text-6xl md:text-7xl mb-6 text-kadam-deep-green">
+            <h1 className="kadam-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 sm:mb-6 text-white leading-tight">
               Find Your Wizard
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed kadam-body-medium">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed kadam-body-medium px-4">
               Unlock clarity, purpose, and momentum with the perfect coach, consultant, counselor, or mentor — matched by AI, guided by wisdom.
             </p>
           </motion.div>
@@ -140,9 +140,9 @@ function Home() {
             animate={{opacity: 1,y: 0}} 
             transition={{delay: 0.2}} 
             onSubmit={handleSearch} 
-            className="relative mb-8"
+            className="relative mb-6 sm:mb-8"
           >
-            <div className="relative max-w-xl mx-auto">
+            <div className="relative max-w-xl mx-auto px-4">
               <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 focus-within:shadow-xl">
                 
                 {/* Input Field */}
@@ -151,39 +151,21 @@ function Home() {
                   placeholder="How can we help? (e.g., 'I keep procrastinating and feel burned out at work')"
                   value={searchInput}
                   onChange={(e)=> setSearchInput(e.target.value)}
-                  className="flex-1 py-4 px-6 text-lg focus:outline-none bg-transparent rounded-full"
+                  className="flex-1 py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base lg:text-lg focus:outline-none bg-transparent rounded-full"
                   disabled={isLoading}
                 />
-
-                {/* Voice Search Icon */}
-                <button 
-                  type="button"
-                  className="p-3 hover:bg-gray-100 rounded-full transition-colors"
-                  title="Search by voice"
-                >
-                  <FaMicrophone className="text-gray-400 text-lg hover:text-kadam-deep-green" />
-                </button>
-
-                {/* Image Search Icon with Gold Background */}
-                <button 
-                  type="button"
-                  className="p-3 m-1 rounded-full transition-colors"
-                  style={{backgroundColor: '#fab100'}}
-                  title="Search by image"
-                >
-                  <FaCamera className="text-white text-lg" />
-                </button>
 
                 {/* Submit Button */}
                 <button 
                   type="submit"
                   disabled={isLoading || !searchInput.trim()}
-                  className="mr-2 p-3 bg-kadam-deep-green hover:bg-kadam-medium-green text-white rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="mr-2 p-2 sm:p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{backgroundColor: '#fab100'}}
                 >
                   {isLoading ? (
-                    <FaSpinner className="text-lg animate-spin" />
+                    <FaSpinner className="text-base sm:text-lg text-white animate-spin" />
                   ) : (
-                    <FaSearch className="text-lg" />
+                    <FaSearch className="text-base sm:text-lg text-white" />
                   )}
                 </button>
 
@@ -196,18 +178,18 @@ function Home() {
             initial={{opacity: 0,y: 30}} 
             animate={{opacity: 1,y: 0}} 
             transition={{delay: 0.4}} 
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8 px-4"
           >
             <button 
               onClick={handleSearch}
               disabled={!searchInput.trim() || isLoading}
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded border border-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-white/10 hover:bg-white/20 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded border border-white/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base backdrop-blur-sm"
             >
               Find My Wizard
             </button>
             <Link 
               to="/wizards"
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded border border-gray-300 transition-colors text-center"
+              className="bg-white/10 hover:bg-white/20 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded border border-white/30 transition-colors text-center text-sm sm:text-base backdrop-blur-sm"
             >
               I'm Feeling Wizardry
             </Link>
@@ -218,15 +200,15 @@ function Home() {
             initial={{opacity: 0,y: 30}} 
             animate={{opacity: 1,y: 0}} 
             transition={{delay: 0.6}} 
-            className="text-sm"
+            className="text-xs sm:text-sm px-4"
           >
-            <p className="text-gray-600 mb-3">Quick examples:</p>
+            <p className="text-white/80 mb-3">Quick examples:</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {quickTests.map((test,index)=> (
                 <button 
                   key={index}
                   onClick={()=> setSearchInput(test)}
-                  className="bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs transition-colors border"
+                  className="bg-white/10 hover:bg-white/20 text-white px-2 sm:px-3 py-1 rounded-full text-xs transition-colors border border-white/20 backdrop-blur-sm"
                 >
                   {test}
                 </button>
@@ -241,9 +223,9 @@ function Home() {
                 initial={{opacity: 0,y: 20}} 
                 animate={{opacity: 1,y: 0}} 
                 exit={{opacity: 0,y: -20}} 
-                className="mt-6 bg-red-100 border border-red-300 text-red-700 px-6 py-4 rounded-2xl max-w-2xl mx-auto"
+                className="mt-6 bg-red-500/20 border border-red-400/30 text-red-100 px-4 sm:px-6 py-4 rounded-2xl max-w-2xl mx-auto backdrop-blur-sm"
               >
-                <p className="kadam-body">{error}</p>
+                <p className="kadam-body text-sm sm:text-base">{error}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -254,8 +236,8 @@ function Home() {
       {/* GPT Recommendation Results */}
       <AnimatePresence>
         {showGptResult && gptRecommendation && (
-          <div id="gpt-results" className="bg-kadam-light-green py-20">
-            <div className="max-w-7xl mx-auto px-6">
+          <div id="gpt-results" className="bg-kadam-light-green py-12 sm:py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <WizardRecommendation 
                 recommendation={gptRecommendation} 
                 onClose={closeGptResult} 
@@ -266,38 +248,38 @@ function Home() {
       </AnimatePresence>
 
       {/* Wizard Types Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20 bg-kadam-off-white">
-        <h2 className="kadam-heading text-display-lg text-center mb-16">Choose Your Wizard Type</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 bg-kadam-off-white">
+        <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-center mb-8 sm:mb-16">Choose Your Wizard Type</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {wizardTypes.map((wizard)=> (
             <motion.div 
               key={wizard.name}
               whileHover={{y: -8,scale: 1.02}}
               className="kadam-card overflow-hidden hover:shadow-medium transition-all duration-300 border border-gray-200"
             >
-              <div className="h-56 overflow-hidden relative">
+              <div className="h-48 sm:h-56 overflow-hidden relative">
                 <img 
                   src={wizard.image} 
                   alt={wizard.name} 
                   className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50 flex flex-col items-center justify-center text-white">
-                  <wizard.icon className="text-5xl mb-4 text-white drop-shadow-lg" />
-                  <h3 className="text-2xl font-bold mb-3 text-white drop-shadow-lg tracking-wide">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50 flex flex-col items-center justify-center text-white p-4">
+                  <wizard.icon className="text-3xl sm:text-4xl lg:text-5xl mb-3 sm:mb-4 text-white drop-shadow-lg" />
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 text-white drop-shadow-lg tracking-wide text-center">
                     {wizard.name}
                   </h3>
-                  <p className="text-center px-4 mb-4 text-white/90 drop-shadow text-sm font-medium">
+                  <p className="text-center px-2 sm:px-4 mb-3 sm:mb-4 text-white/90 drop-shadow text-xs sm:text-sm font-medium">
                     {wizard.description}
                   </p>
-                  <span className="bg-kadam-gold text-kadam-deep-green px-6 py-2 rounded-2xl font-bold shadow-lg">
+                  <span className="bg-kadam-gold text-kadam-deep-green px-3 sm:px-4 lg:px-6 py-1 sm:py-2 rounded-xl sm:rounded-2xl font-bold shadow-lg text-xs sm:text-sm">
                     {wizard.count} Available
                   </span>
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <Link 
                   to={wizard.path}
-                  className="text-kadam-deep-green flex items-center justify-center hover:text-kadam-medium-green font-semibold transition-colors kadam-body-medium"
+                  className="text-kadam-deep-green flex items-center justify-center hover:text-kadam-medium-green font-semibold transition-colors kadam-body-medium text-sm sm:text-base"
                 >
                   Find Your {wizard.name} 
                   <FaArrowRight className="ml-2" />
@@ -309,17 +291,17 @@ function Home() {
       </div>
 
       {/* Call to Action */}
-      <div className="bg-kadam-deep-green py-20">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="kadam-heading text-display-lg mb-8 text-kadam-off-white">
+      <div className="bg-kadam-deep-green py-12 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl mb-6 sm:mb-8 text-kadam-off-white">
             Ready to Find Your Perfect Wizard?
           </h2>
-          <p className="text-2xl text-kadam-off-white mb-12 font-medium kadam-body-medium">
+          <p className="text-lg sm:text-xl lg:text-2xl text-kadam-off-white mb-8 sm:mb-12 font-medium kadam-body-medium px-4">
             Join thousands who have transformed their lives with the right guidance.
           </p>
           <button 
             onClick={scrollToSearch}
-            className="bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green px-12 py-6 rounded-3xl text-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-medium hover:shadow-large"
+            className="bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green px-8 sm:px-12 py-4 sm:py-6 rounded-2xl sm:rounded-3xl text-lg sm:text-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-medium hover:shadow-large"
           >
             Find My Wizard
           </button>

@@ -1,26 +1,25 @@
-import { motion } from 'framer-motion';
-import { FaHeart, FaUsers, FaStar, FaGlobe } from 'react-icons/fa';
+import {motion} from 'framer-motion';
+import {FaHeart,FaUsers,FaStar,FaGlobe} from 'react-icons/fa';
 
 function About() {
   return (
     <div className="min-h-screen bg-kadam-off-white">
-      {/* Hero Section */}
-      <div className="kadam-gradient py-24">
+      
+      {/* Hero Section - Dark Background */}
+      <div className="py-24" style={{backgroundColor: '#013d39'}}>
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="kadam-heading text-hero text-kadam-deep-green mb-8"
-            style={{ color: '#023d39' }}
+          <motion.h1 
+            initial={{opacity: 0,y: 30}} 
+            animate={{opacity: 1,y: 0}} 
+            className="kadam-heading text-hero text-white mb-8"
           >
             About Wizardoo
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-2xl max-w-3xl mx-auto kadam-body-medium"
-            style={{ color: '#023d39' }}
+          <motion.p 
+            initial={{opacity: 0,y: 30}} 
+            animate={{opacity: 1,y: 0}} 
+            transition={{delay: 0.2}} 
+            className="text-2xl max-w-3xl mx-auto kadam-body-medium text-white/90"
           >
             Your Personal Transformation Engine
           </motion.p>
@@ -30,16 +29,17 @@ function About() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="max-w-5xl mx-auto">
+          
           <div className="kadam-card-elevated p-12 md:p-16 mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
+            <motion.div 
+              initial={{opacity: 0,y: 40}} 
+              animate={{opacity: 1,y: 0}} 
               className="text-center mb-16"
             >
-              <img
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
-                alt="Team collaboration"
-                className="w-full h-96 object-cover rounded-3xl mb-12 shadow-medium"
+              <img 
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" 
+                alt="Team collaboration" 
+                className="w-full h-96 object-cover rounded-3xl mb-12 shadow-medium" 
               />
               <h2 className="kadam-heading text-display-md text-kadam-deep-green mb-8">Our Mission</h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed kadam-body">
@@ -51,10 +51,10 @@ function About() {
             </motion.div>
 
             {/* Values Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+            <motion.div 
+              initial={{opacity: 0,y: 40}} 
+              animate={{opacity: 1,y: 0}} 
+              transition={{delay: 0.3}} 
               className="bg-kadam-light-green p-12 rounded-3xl"
             >
               <h2 className="kadam-heading text-display-md text-kadam-deep-green text-center mb-12">Our Values</h2>
@@ -92,10 +92,10 @@ function About() {
           </div>
 
           {/* Stats Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <motion.div 
+            initial={{opacity: 0,y: 40}} 
+            animate={{opacity: 1,y: 0}} 
+            transition={{delay: 0.4}} 
             className="kadam-card-elevated p-12 md:p-16"
           >
             <h2 className="kadam-heading text-display-md text-kadam-deep-green text-center mb-12">
@@ -116,6 +116,7 @@ function About() {
               </div>
             </div>
           </motion.div>
+
         </div>
       </div>
     </div>

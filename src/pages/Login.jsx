@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
-import { FaUser, FaLock, FaGoogle, FaApple } from 'react-icons/fa';
+import {useState} from 'react';
+import {Link,useNavigate} from 'react-router-dom';
+import {motion} from 'framer-motion';
+import {useAuth} from '../context/AuthContext';
+import {FaUser,FaLock,FaGoogle,FaApple} from 'react-icons/fa';
 
 function Login() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
+  const navigate=useNavigate();
+  const {login}=useAuth();
+  const [formData,setFormData]=useState({
     email: '',
     password: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit=(e)=> {
     e.preventDefault();
     login(formData);
     navigate('/');
@@ -20,11 +20,12 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-kadam-off-white flex items-center justify-center py-16 px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
+      <motion.div 
+        initial={{opacity: 0,y: 30}} 
+        animate={{opacity: 1,y: 0}} 
         className="max-w-lg w-full space-y-8"
       >
+        
         <div className="kadam-card-elevated p-12">
           <div className="text-center mb-12">
             <h2 className="kadam-heading text-display-md mb-4">Welcome Back</h2>
@@ -59,13 +60,13 @@ function Login() {
               <label className="block text-gray-700 kadam-body-medium text-lg mb-3">Email Address</label>
               <div className="relative">
                 <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
-                <input
+                <input 
                   type="email"
                   required
                   className="kadam-input pl-14 text-lg"
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e)=> setFormData({...formData,email: e.target.value})}
                 />
               </div>
             </div>
@@ -74,20 +75,20 @@ function Login() {
               <label className="block text-gray-700 kadam-body-medium text-lg mb-3">Password</label>
               <div className="relative">
                 <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
-                <input
+                <input 
                   type="password"
                   required
                   className="kadam-input pl-14 text-lg"
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e)=> setFormData({...formData,password: e.target.value})}
                 />
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <input
+                <input 
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
@@ -97,7 +98,6 @@ function Login() {
                   Remember me
                 </label>
               </div>
-
               <div>
                 <a href="#" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
                   Forgot password?
@@ -119,6 +119,7 @@ function Login() {
             </p>
           </div>
         </div>
+
       </motion.div>
     </div>
   );

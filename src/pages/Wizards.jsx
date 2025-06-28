@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion';
-import { FaUserTie, FaBrain, FaHeart, FaLightbulb } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import {motion} from 'framer-motion';
+import {FaUserTie,FaBrain,FaHeart,FaLightbulb} from 'react-icons/fa';
+import {Link} from 'react-router-dom';
 
-const wizardCategories = [
+const wizardCategories=[
   {
     id: 1,
     name: "Coach",
@@ -47,22 +47,23 @@ const wizardCategories = [
 
 function Wizards() {
   return (
-    <div className="min-h-screen bg-wizardoo-neutral-50">
-      {/* Header Section */}
-      <div className="wizardoo-gradient py-16">
+    <div className="min-h-screen bg-kadam-off-white">
+      
+      {/* Header Section - Dark Background */}
+      <div className="py-16" style={{backgroundColor: '#013d39'}}>
         <div className="max-w-7xl mx-auto px-4 text-center">
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{opacity: 0,y: 20}} 
+            animate={{opacity: 1,y: 0}} 
             className="font-display text-4xl md:text-5xl font-bold text-white mb-6"
           >
             Find Your Perfect Wizard
           </motion.h1>
           <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-wizardoo-neutral-100 max-w-3xl mx-auto"
+            initial={{opacity: 0,y: 20}} 
+            animate={{opacity: 1,y: 0}} 
+            transition={{delay: 0.2}} 
+            className="text-xl text-white/90 max-w-3xl mx-auto"
           >
             Browse our curated selection of expert coaches, consultants, counselors, and mentors ready to guide your transformation journey.
           </motion.p>
@@ -72,37 +73,37 @@ function Wizards() {
       {/* Wizard Categories */}
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {wizardCategories.map((category, index) => (
-            <motion.div
+          {wizardCategories.map((category,index)=> (
+            <motion.div 
               key={category.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-wizardoo-neutral-200"
+              initial={{opacity: 0,y: 30}} 
+              animate={{opacity: 1,y: 0}} 
+              transition={{delay: index * 0.1}}
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200"
             >
               <div className="md:flex">
                 <div className="md:w-1/2 h-64 md:h-auto relative overflow-hidden">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+                  <img 
+                    src={category.image} 
+                    alt={category.name} 
+                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300" 
                   />
-                  <div className="absolute inset-0 wizardoo-gradient opacity-20"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-kadam-deep-green/20 via-kadam-deep-green/10 to-transparent"></div>
                 </div>
                 <div className="md:w-1/2 p-8 flex flex-col justify-center">
                   <div className="flex items-center mb-4">
-                    <category.icon className="text-3xl text-wizardoo-green-700 mr-4" />
-                    <h3 className="font-display text-2xl font-bold text-wizardoo-green-800">{category.name}</h3>
+                    <category.icon className="text-3xl text-kadam-deep-green mr-4" />
+                    <h3 className="font-display text-2xl font-bold text-kadam-deep-green">{category.name}</h3>
                   </div>
-                  <p className="text-wizardoo-neutral-600 mb-4 font-medium">{category.description}</p>
-                  <p className="text-wizardoo-neutral-500 text-sm mb-6">{category.longDescription}</p>
+                  <p className="text-gray-600 mb-4 font-medium">{category.description}</p>
+                  <p className="text-gray-500 text-sm mb-6">{category.longDescription}</p>
                   <div className="flex justify-between items-center">
-                    <span className="bg-wizardoo-gold-100 text-wizardoo-gold-800 px-4 py-2 rounded-full text-sm font-semibold">
+                    <span className="bg-kadam-gold text-kadam-deep-green px-4 py-2 rounded-full text-sm font-semibold">
                       {category.count} Available
                     </span>
-                    <Link
-                      to={category.path}
-                      className="wizardoo-button"
+                    <Link 
+                      to={category.path} 
+                      className="bg-kadam-deep-green hover:bg-kadam-medium-green text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300"
                     >
                       Explore {category.name}s
                     </Link>
@@ -116,34 +117,35 @@ function Wizards() {
 
       {/* Additional Info Section */}
       <div className="max-w-7xl mx-auto px-4 pb-16">
-        <div className="bg-wizardoo-gold-50 rounded-2xl p-8 md:p-12">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-8 text-wizardoo-green-800">
+        <div className="bg-kadam-light-green rounded-2xl p-8 md:p-12">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-8 text-kadam-deep-green">
             Not Sure Which Type You Need?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
-              <FaUserTie className="text-4xl text-wizardoo-green-700 mx-auto mb-4" />
-              <h4 className="font-display font-semibold mb-3 text-wizardoo-green-800">Coach</h4>
-              <p className="text-sm text-wizardoo-neutral-600">Perfect for achieving specific goals, improving performance, and building sustainable habits.</p>
+              <FaUserTie className="text-4xl text-kadam-deep-green mx-auto mb-4" />
+              <h4 className="font-display font-semibold mb-3 text-kadam-deep-green">Coach</h4>
+              <p className="text-sm text-gray-600">Perfect for achieving specific goals, improving performance, and building sustainable habits.</p>
             </div>
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
-              <FaBrain className="text-4xl text-wizardoo-green-700 mx-auto mb-4" />
-              <h4 className="font-display font-semibold mb-3 text-wizardoo-green-800">Consultant</h4>
-              <p className="text-sm text-wizardoo-neutral-600">Ideal for strategic business problems, analysis, and expert professional advice.</p>
+              <FaBrain className="text-4xl text-kadam-deep-green mx-auto mb-4" />
+              <h4 className="font-display font-semibold mb-3 text-kadam-deep-green">Consultant</h4>
+              <p className="text-sm text-gray-600">Ideal for strategic business problems, analysis, and expert professional advice.</p>
             </div>
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
-              <FaHeart className="text-4xl text-wizardoo-green-700 mx-auto mb-4" />
-              <h4 className="font-display font-semibold mb-3 text-wizardoo-green-800">Counselor</h4>
-              <p className="text-sm text-wizardoo-neutral-600">Best for emotional support, mental health guidance, and healing-focused approaches.</p>
+              <FaHeart className="text-4xl text-kadam-deep-green mx-auto mb-4" />
+              <h4 className="font-display font-semibold mb-3 text-kadam-deep-green">Counselor</h4>
+              <p className="text-sm text-gray-600">Best for emotional support, mental health guidance, and healing-focused approaches.</p>
             </div>
             <div className="text-center p-6 bg-white rounded-lg shadow-sm">
-              <FaLightbulb className="text-4xl text-wizardoo-green-700 mx-auto mb-4" />
-              <h4 className="font-display font-semibold mb-3 text-wizardoo-green-800">Mentor</h4>
-              <p className="text-sm text-wizardoo-neutral-600">Great for long-term guidance, wisdom sharing, and personal development.</p>
+              <FaLightbulb className="text-4xl text-kadam-deep-green mx-auto mb-4" />
+              <h4 className="font-display font-semibold mb-3 text-kadam-deep-green">Mentor</h4>
+              <p className="text-sm text-gray-600">Great for long-term guidance, wisdom sharing, and personal development.</p>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   );
 }

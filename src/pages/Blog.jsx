@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaCalendar, FaUser, FaArrowRight, FaEnvelope, FaUserAlt } from 'react-icons/fa';
+import {useState} from 'react';
+import {motion} from 'framer-motion';
+import {FaCalendar,FaUser,FaArrowRight,FaEnvelope,FaUserAlt} from 'react-icons/fa';
 
-const blogPosts = [
+const blogPosts=[
   {
     id: 1,
     title: "The Science of Personal Transformation",
@@ -33,38 +33,37 @@ const blogPosts = [
 ];
 
 function Blog() {
-  const [newsletterData, setNewsletterData] = useState({
+  const [newsletterData,setNewsletterData]=useState({
     name: '',
     email: ''
   });
 
-  const handleNewsletterSubmit = (e) => {
+  const handleNewsletterSubmit=(e)=> {
     e.preventDefault();
     // Handle newsletter subscription
-    console.log('Newsletter subscription:', newsletterData);
+    console.log('Newsletter subscription:',newsletterData);
     alert('Thank you for subscribing to our newsletter!');
-    setNewsletterData({ name: '', email: '' });
+    setNewsletterData({name: '',email: ''});
   };
 
   return (
     <div className="min-h-screen bg-kadam-off-white">
-      {/* Header Section */}
-      <div className="kadam-gradient py-16">
+      
+      {/* Header Section - Dark Background */}
+      <div className="py-16" style={{backgroundColor: '#013d39'}}>
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="font-display text-4xl md:text-5xl font-bold mb-6"
-            style={{ color: '#023d39' }}
+          <motion.h1 
+            initial={{opacity: 0,y: 20}} 
+            animate={{opacity: 1,y: 0}} 
+            className="font-display text-4xl md:text-5xl font-bold mb-6 text-white"
           >
             Wisdom & Insights
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl max-w-3xl mx-auto"
-            style={{ color: '#023d39' }}
+          <motion.p 
+            initial={{opacity: 0,y: 20}} 
+            animate={{opacity: 1,y: 0}} 
+            transition={{delay: 0.2}} 
+            className="text-xl max-w-3xl mx-auto text-white/90"
           >
             Discover transformational insights, expert guidance, and practical wisdom to accelerate your personal growth journey.
           </motion.p>
@@ -74,19 +73,19 @@ function Blog() {
       {/* Blog Posts */}
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post, index) => (
-            <motion.article
+          {blogPosts.map((post,index)=> (
+            <motion.article 
               key={post.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              initial={{opacity: 0,y: 30}} 
+              animate={{opacity: 1,y: 0}} 
+              transition={{delay: index * 0.1}}
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200"
             >
               <div className="h-48 overflow-hidden">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+                <img 
+                  src={post.image} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300" 
                 />
               </div>
               <div className="p-6">
@@ -129,35 +128,32 @@ function Blog() {
             <p className="text-gray-600 mb-8">
               Get the latest transformational content, expert interviews, and practical guides delivered to your inbox.
             </p>
-            
             <form onSubmit={handleNewsletterSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="relative">
                   <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
+                  <input 
                     type="text"
                     placeholder="Your Name"
                     required
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
                     value={newsletterData.name}
-                    onChange={(e) => setNewsletterData({ ...newsletterData, name: e.target.value })}
+                    onChange={(e)=> setNewsletterData({...newsletterData,name: e.target.value})}
                   />
                 </div>
-                
                 <div className="relative">
                   <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
+                  <input 
                     type="email"
                     placeholder="Your Email Address"
                     required
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
                     value={newsletterData.email}
-                    onChange={(e) => setNewsletterData({ ...newsletterData, email: e.target.value })}
+                    onChange={(e)=> setNewsletterData({...newsletterData,email: e.target.value})}
                   />
                 </div>
               </div>
-              
-              <button
+              <button 
                 type="submit"
                 className="w-full md:w-auto bg-kadam-deep-green hover:bg-kadam-medium-green text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105"
               >
