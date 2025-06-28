@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { FaUserTie, FaBrain, FaHeart, FaLightbulb, FaStar, FaArrowRight, FaWandMagicSparkles } from 'react-icons/fa6';
+import {motion} from 'framer-motion';
+import {Link} from 'react-router-dom';
+import {FaUserTie, FaBrain, FaHeart, FaLightbulb, FaStar, FaArrowRight} from 'react-icons/fa';
+import {FaWandMagicSparkles} from 'react-icons/fa6';
 
 const iconMap = {
   FaUserTie,
@@ -9,7 +10,7 @@ const iconMap = {
   FaLightbulb
 };
 
-function WizardRecommendation({ recommendation, onClose }) {
+function WizardRecommendation({recommendation, onClose}) {
   if (!recommendation) return null;
 
   const getWizardIcon = (iconName) => {
@@ -52,9 +53,9 @@ function WizardRecommendation({ recommendation, onClose }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -30 }}
+      initial={{opacity: 0, y: 30}}
+      animate={{opacity: 1, y: 0}}
+      exit={{opacity: 0, y: -30}}
       className="bg-white rounded-3xl shadow-large border-2 border-kadam-gold p-8 max-w-3xl mx-auto relative"
     >
       {/* Close Button */}
@@ -143,14 +144,14 @@ function WizardRecommendation({ recommendation, onClose }) {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <Link 
+        <Link
           to={getSpecializedWizardLink()}
           className="flex-1 bg-gradient-to-r from-kadam-deep-green to-kadam-medium-green hover:from-kadam-medium-green hover:to-kadam-deep-green text-kadam-off-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-medium hover:shadow-large text-center flex items-center justify-center"
         >
           <span>Meet Your {recommendation.wizard.name}</span>
           <FaArrowRight className="ml-2" />
         </Link>
-        <button 
+        <button
           onClick={onClose}
           className="flex-1 kadam-button-outline text-center"
         >

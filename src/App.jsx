@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -9,8 +9,10 @@ import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import SignupWizard from './pages/SignupWizard';
+import WizardPendingApproval from './pages/WizardPendingApproval';
 import Profile from './pages/Profile';
-import { AuthProvider } from './context/AuthContext';
+import {AuthProvider} from './context/AuthContext';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/signup-wizard" element={<SignupWizard />} />
+              <Route path="/wizard-pending-approval" element={<WizardPendingApproval />} />
               <Route path="/profile" element={<Profile />} />
             </Routes>
           </main>

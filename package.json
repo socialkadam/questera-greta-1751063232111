@@ -1,5 +1,5 @@
 {
-  "name": "quest-react-starter",
+  "name": "wizardoo-platform",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "npm run lint && vite build",
     "lint": "eslint .",
-    "lint:error": "eslint . --quiet", 
+    "lint:error": "eslint . --quiet",
     "preview": "vite preview"
   },
   "dependencies": {

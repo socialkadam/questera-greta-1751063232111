@@ -1,32 +1,86 @@
 import {useState} from 'react';
-import {Link,useNavigate} from 'react-router-dom';
+import {Link, useNavigate, useLocation} from 'react-router-dom';
 import {motion} from 'framer-motion';
 import {useAuth} from '../context/AuthContext';
-import {FaUser,FaLock,FaGoogle,FaApple} from 'react-icons/fa';
+import {authHelpers} from '../lib/supabase';
+import {FaUser, FaLock, FaGoogle, FaApple} from 'react-icons/fa';
 import ScrollToTop from '../components/ScrollToTop';
 
 function Login() {
-  const navigate=useNavigate();
-  const {login}=useAuth();
-  const [formData,setFormData]=useState({
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {login} = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
 
-  const handleSubmit=(e)=> {
+  // Get redirect path from location state
+  const from = location.state?.from?.pathname || '/';
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({...prev, [field]: value}));
+    setError('');
+  };
+
+  const handleSocialLogin = (provider) => {
+    // For now, show a coming soon message
+    alert(`${provider} login coming soon! Please use email login for now.`);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
-    navigate('/');
+    setLoading(true);
+    setError('');
+
+    try {
+      const { data, error: signInError } = await authHelpers.signIn(
+        formData.email,
+        formData.password
+      );
+
+      if (signInError) {
+        throw new Error(signInError.message);
+      }
+
+      if (!data.user) {
+        throw new Error('Login failed');
+      }
+
+      // Get user profile
+      const { data: profile, error: profileError } = await authHelpers.getCurrentProfile();
+      
+      if (profileError) {
+        console.warn('Could not fetch profile:', profileError);
+      }
+
+      // Login with profile data
+      login({
+        id: data.user.id,
+        email: data.user.email,
+        ...profile
+      });
+
+      // Redirect to intended page or home
+      navigate(from, { replace: true });
+
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.message || 'Failed to sign in');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-kadam-off-white flex items-center justify-center py-16 px-6">
-      <motion.div 
-        initial={{opacity: 0,y: 30}} 
-        animate={{opacity: 1,y: 0}} 
+      <motion.div
+        initial={{opacity: 0, y: 30}}
+        animate={{opacity: 1, y: 0}}
         className="max-w-lg w-full space-y-8"
       >
-        
         <div className="kadam-card-elevated p-12">
           <div className="text-center mb-12">
             <h2 className="kadam-heading text-display-md mb-4">Welcome Back</h2>
@@ -37,11 +91,17 @@ function Login() {
 
           {/* Social Login Buttons */}
           <div className="space-y-4 mb-8">
-            <button className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-200 rounded-2xl text-gray-700 hover:bg-gray-50 transition-all duration-300 kadam-body-medium">
+            <button 
+              onClick={() => handleSocialLogin('Google')}
+              className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-200 rounded-2xl text-gray-700 hover:bg-gray-50 transition-all duration-300 kadam-body-medium"
+            >
               <FaGoogle className="mr-3 text-red-500 text-xl" />
               Continue with Google
             </button>
-            <button className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-200 rounded-2xl text-gray-700 hover:bg-gray-50 transition-all duration-300 kadam-body-medium">
+            <button 
+              onClick={() => handleSocialLogin('Apple')}
+              className="w-full flex items-center justify-center px-6 py-4 border-2 border-gray-200 rounded-2xl text-gray-700 hover:bg-gray-50 transition-all duration-300 kadam-body-medium"
+            >
               <FaApple className="mr-3 text-black text-xl" />
               Continue with Apple
             </button>
@@ -61,13 +121,13 @@ function Login() {
               <label className="block text-gray-700 kadam-body-medium text-lg mb-3">Email Address</label>
               <div className="relative">
                 <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
-                <input 
+                <input
                   type="email"
                   required
                   className="kadam-input pl-14 text-lg"
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={(e)=> setFormData({...formData,email: e.target.value})}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                 />
               </div>
             </div>
@@ -76,20 +136,27 @@ function Login() {
               <label className="block text-gray-700 kadam-body-medium text-lg mb-3">Password</label>
               <div className="relative">
                 <FaLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
-                <input 
+                <input
                   type="password"
                   required
                   className="kadam-input pl-14 text-lg"
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e)=> setFormData({...formData,password: e.target.value})}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
                 />
               </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+                {error}
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <input 
+                <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
@@ -99,6 +166,7 @@ function Login() {
                   Remember me
                 </label>
               </div>
+
               <div>
                 <a href="#" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
                   Forgot password?
@@ -106,8 +174,19 @@ function Login() {
               </div>
             </div>
 
-            <button type="submit" className="w-full kadam-button text-lg">
-              Sign In
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full kadam-button text-lg disabled:opacity-50"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Signing In...
+                </div>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
 
@@ -118,12 +197,16 @@ function Login() {
                 Sign up here
               </Link>
             </p>
+            <p className="text-gray-600 kadam-body mt-2">
+              Want to become a wizard?{' '}
+              <Link to="/signup-wizard" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
+                Apply as Wizard
+              </Link>
+            </p>
           </div>
         </div>
-
       </motion.div>
 
-      {/* Scroll to Top Component */}
       <ScrollToTop />
     </div>
   );

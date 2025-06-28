@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {useAuth} from '../context/AuthContext';
-import {FaUser, FaWandMagicSparkles, FaUsers, FaCrown, FaChevronDown} from 'react-icons/fa6';
+import {FaUser, FaCrown, FaChevronDown} from 'react-icons/fa';
+import {FaWandMagicSparkles} from 'react-icons/fa6';
 import {motion, AnimatePresence} from 'framer-motion';
 
 const ROLE_ICONS = {
