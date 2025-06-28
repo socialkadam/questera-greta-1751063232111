@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Wizards from './pages/Wizards';
+import WizardListing from './pages/WizardListing';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
@@ -20,7 +21,8 @@ function App() {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/wizards" element={<Wizards />} />
+              <Route path="/wizards" element={<WizardListing />} />
+              <Route path="/wizards-overview" element={<Wizards />} />
               <Route path="/about" element={<About />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/contact" element={<Contact />} />

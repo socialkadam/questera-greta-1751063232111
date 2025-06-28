@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
+import { FaCalendar, FaUser, FaArrowRight, FaEnvelope, FaUserAlt } from 'react-icons/fa';
 
 const blogPosts = [
   {
@@ -32,23 +33,38 @@ const blogPosts = [
 ];
 
 function Blog() {
+  const [newsletterData, setNewsletterData] = useState({
+    name: '',
+    email: ''
+  });
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    // Handle newsletter subscription
+    console.log('Newsletter subscription:', newsletterData);
+    alert('Thank you for subscribing to our newsletter!');
+    setNewsletterData({ name: '', email: '' });
+  };
+
   return (
-    <div className="min-h-screen bg-wizardoo-neutral-50">
+    <div className="min-h-screen bg-kadam-off-white">
       {/* Header Section */}
-      <div className="wizardoo-gradient py-16">
+      <div className="kadam-gradient py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-display text-4xl md:text-5xl font-bold text-white mb-6"
+            className="font-display text-4xl md:text-5xl font-bold mb-6"
+            style={{ color: '#023d39' }}
           >
             Wisdom & Insights
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-wizardoo-neutral-100 max-w-3xl mx-auto"
+            className="text-xl max-w-3xl mx-auto"
+            style={{ color: '#023d39' }}
           >
             Discover transformational insights, expert guidance, and practical wisdom to accelerate your personal growth journey.
           </motion.p>
@@ -64,7 +80,7 @@ function Blog() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-wizardoo-neutral-200"
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-200"
             >
               <div className="h-48 overflow-hidden">
                 <img
@@ -75,17 +91,17 @@ function Blog() {
               </div>
               <div className="p-6">
                 <div className="flex items-center mb-4">
-                  <span className="bg-wizardoo-gold-100 text-wizardoo-gold-800 px-3 py-1 rounded-full text-xs font-semibold">
+                  <span className="bg-kadam-gold text-kadam-deep-green px-3 py-1 rounded-full text-xs font-semibold">
                     {post.category}
                   </span>
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-3 text-wizardoo-green-800 hover:text-wizardoo-green-700 cursor-pointer">
+                <h3 className="font-display text-xl font-semibold mb-3 text-kadam-deep-green hover:text-kadam-medium-green cursor-pointer">
                   {post.title}
                 </h3>
-                <p className="text-wizardoo-neutral-600 mb-4 text-sm leading-relaxed">
+                <p className="text-gray-600 mb-4 text-sm leading-relaxed">
                   {post.excerpt}
                 </p>
-                <div className="flex items-center justify-between text-sm text-wizardoo-neutral-500 mb-4">
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                   <div className="flex items-center">
                     <FaUser className="mr-2" />
                     <span>{post.author}</span>
@@ -95,24 +111,59 @@ function Blog() {
                     <span>{post.date}</span>
                   </div>
                 </div>
-                <button className="flex items-center text-wizardoo-green-700 hover:text-wizardoo-green-800 font-semibold transition-colors">
-                  Read More <FaArrowRight className="ml-2" />
+                <button className="flex items-center text-kadam-deep-green hover:text-kadam-medium-green font-semibold transition-colors">
+                  Read More
+                  <FaArrowRight className="ml-2" />
                 </button>
               </div>
             </motion.article>
           ))}
         </div>
 
-        {/* Coming Soon Message */}
+        {/* Newsletter Subscription Section */}
         <div className="text-center mt-16">
-          <div className="bg-wizardoo-gold-50 rounded-2xl p-8 md:p-12 max-w-2xl mx-auto">
-            <h2 className="font-display text-2xl font-bold mb-4 text-wizardoo-green-800">More Content Coming Soon</h2>
-            <p className="text-wizardoo-neutral-600 mb-6">
-              We're working on bringing you more transformational content, expert interviews, and practical guides.
+          <div className="bg-white rounded-2xl p-8 md:p-12 max-w-2xl mx-auto shadow-lg border border-gray-200">
+            <h2 className="font-display text-2xl font-bold mb-4 text-kadam-deep-green">
+              Stay Updated with Our Newsletter
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Get the latest transformational content, expert interviews, and practical guides delivered to your inbox.
             </p>
-            <button className="wizardoo-button">
-              Subscribe for Updates
-            </button>
+            
+            <form onSubmit={handleNewsletterSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative">
+                  <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    required
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
+                    value={newsletterData.name}
+                    onChange={(e) => setNewsletterData({ ...newsletterData, name: e.target.value })}
+                  />
+                </div>
+                
+                <div className="relative">
+                  <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="email"
+                    placeholder="Your Email Address"
+                    required
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
+                    value={newsletterData.email}
+                    onChange={(e) => setNewsletterData({ ...newsletterData, email: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full md:w-auto bg-kadam-deep-green hover:bg-kadam-medium-green text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105"
+              >
+                Subscribe to Our Newsletter
+              </button>
+            </form>
           </div>
         </div>
       </div>

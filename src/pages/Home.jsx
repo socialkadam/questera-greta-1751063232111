@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { FaSearch, FaArrowRight, FaUserTie, FaBrain, FaHeart, FaLightbulb } from 'react-icons/fa';
+import { FaSearch, FaArrowRight, FaUserTie, FaBrain, FaHeart, FaLightbulb, FaSpinner, FaMicrophone, FaCamera } from 'react-icons/fa';
+import { getWizardRecommendation, getWizardDetailsByType } from '../api/gptMatch';
+import WizardRecommendation from '../components/WizardRecommendation';
 
 const wizardTypes = [
   {
@@ -38,161 +40,234 @@ const wizardTypes = [
   }
 ];
 
-const wizardMatching = {
-  coach: ['goal', 'performance', 'achievement', 'fitness', 'career', 'productivity', 'habit', 'motivation'],
-  consultant: ['business', 'strategy', 'problem', 'solution', 'analysis', 'planning', 'growth', 'optimization'],
-  counselor: ['stress', 'anxiety', 'depression', 'relationship', 'trauma', 'grief', 'emotional', 'mental health'],
-  mentor: ['guidance', 'wisdom', 'experience', 'advice', 'direction', 'learning', 'development', 'growth']
-};
-
 function Home() {
   const [searchInput, setSearchInput] = useState('');
-  const [matchedWizards, setMatchedWizards] = useState([]);
-  const [showResults, setShowResults] = useState(false);
+  const [gptRecommendation, setGptRecommendation] = useState(null);
+  const [showGptResult, setShowGptResult] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchInput.trim()) return;
 
-    const input = searchInput.toLowerCase();
-    const matches = [];
+    console.log("🔍 Starting search for:", searchInput);
+    setIsLoading(true);
+    setError(null);
 
-    // Score each wizard type based on keyword matching
-    Object.entries(wizardMatching).forEach(([type, keywords]) => {
-      const score = keywords.reduce((acc, keyword) => {
-        return acc + (input.includes(keyword) ? 1 : 0);
-      }, 0);
+    try {
+      console.log("📞 Calling getWizardRecommendation...");
+      const result = await getWizardRecommendation(searchInput);
+      console.log("📋 Got result:", result);
 
-      if (score > 0) {
-        const wizardData = wizardTypes.find(w => w.name.toLowerCase() === type);
-        matches.push({ ...wizardData, score });
+      if (result && result.wizard_type) {
+        console.log("✅ Valid result, getting wizard details...");
+        const wizardDetails = getWizardDetailsByType(result.wizard_type);
+        console.log("🧙 Wizard details:", wizardDetails);
+
+        const recommendation = {
+          ...result,
+          wizard: wizardDetails,
+          userInput: searchInput // Pass original input for personalization
+        };
+
+        console.log("🎯 Final recommendation:", recommendation);
+        setGptRecommendation(recommendation);
+        setShowGptResult(true);
+
+        // Scroll to results
+        setTimeout(() => {
+          const element = document.getElementById('gpt-results');
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 300);
+      } else {
+        console.error("❌ Invalid result from getWizardRecommendation:", result);
+        setError("We couldn't process your request. Please try a different goal or browse our wizard types below.");
       }
-    });
-
-    // Sort by score and take top 3
-    const topMatches = matches
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3);
-
-    setMatchedWizards(topMatches);
-    setShowResults(true);
-
-    // Scroll to results
-    setTimeout(() => {
-      document.getElementById('wizard-results')?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }, 100);
+    } catch (err) {
+      console.error('❌ Search error:', err);
+      setError("Something went wrong. Please check your connection and try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const scrollToHero = () => {
-    document.getElementById('hero-section')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+  const closeGptResult = () => {
+    console.log("🚫 Closing GPT result");
+    setShowGptResult(false);
+    setGptRecommendation(null);
+    setError(null);
   };
+
+  const scrollToSearch = () => {
+    document.getElementById('search-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  // Quick test examples
+  const quickTests = [
+    "I keep procrastinating and feel burned out at work",
+    "I want to lose weight and get fit",
+    "I'm stressed and anxious about my relationship",
+    "I need help growing my startup business"
+  ];
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <div 
-        id="hero-section" 
-        className="min-h-[700px] bg-cover bg-center relative"
-        style={{
-          backgroundImage: "linear-gradient(135deg, rgba(1, 61, 57, 0.85) 0%, rgba(13, 85, 80, 0.7) 100%), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80')"
-        }}
-      >
-        <div className="absolute inset-0">
-          <div className="max-w-7xl mx-auto px-6 h-full flex flex-col justify-center items-center text-center">
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="font-display text-hero font-bold text-kadam-off-white mb-8"
+    <div className="min-h-screen bg-white">
+      {/* Google-Style Hero Section */}
+      <div id="search-section" className="min-h-[80vh] flex flex-col justify-center items-center px-6">
+        <div className="max-w-2xl w-full text-center">
+          {/* Wizardoo Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12"
+          >
+            <img
+              src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751089833011-WIZARDOO%20%28GRETA%20LOGO%29.png"
+              alt="Wizardoo"
+              className="h-24 md:h-32 mx-auto mb-8"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+            <div
+              className="font-display text-6xl font-bold text-kadam-deep-green"
+              style={{ display: 'none' }}
             >
-              Find Your Wizard
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-2xl text-kadam-off-white mb-12 max-w-4xl font-medium leading-relaxed"
-            >
-              Unlock clarity, purpose, and momentum with the perfect coach, consultant, counselor, or mentor — matched by AI, guided by wisdom.
-            </motion.p>
+              WIZARDOO
+            </div>
+          </motion.div>
 
-            {/* Search Bar */}
-            <motion.form 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              onSubmit={handleSearch}
-              className="w-full max-w-3xl relative"
+          {/* Google-Style Search Bar */}
+          <motion.form
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            onSubmit={handleSearch}
+            className="relative mb-8"
+          >
+            <div className="relative max-w-xl mx-auto">
+              <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 focus-within:shadow-xl">
+                {/* Input Field */}
+                <input
+                  type="text"
+                  placeholder="How can we help? (e.g., 'I keep procrastinating and feel burned out at work')"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="flex-1 py-4 px-6 text-lg focus:outline-none bg-transparent rounded-full"
+                  disabled={isLoading}
+                />
+                
+                {/* Voice Search Icon */}
+                <button
+                  type="button"
+                  className="p-3 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Search by voice"
+                >
+                  <FaMicrophone className="text-gray-400 text-lg hover:text-kadam-deep-green" />
+                </button>
+                
+                {/* Image Search Icon with Gold Background */}
+                <button
+                  type="button"
+                  className="p-3 m-1 rounded-full transition-colors"
+                  style={{ backgroundColor: '#fab100' }}
+                  title="Search by image"
+                >
+                  <FaCamera className="text-white text-lg" />
+                </button>
+                
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading || !searchInput.trim()}
+                  className="mr-2 p-3 bg-kadam-deep-green hover:bg-kadam-medium-green text-white rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <FaSpinner className="text-lg animate-spin" />
+                  ) : (
+                    <FaSearch className="text-lg" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </motion.form>
+
+          {/* Google-Style Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
+          >
+            <button
+              onClick={handleSearch}
+              disabled={!searchInput.trim() || isLoading}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded border border-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <input
-                type="text"
-                placeholder="Type your goal or challenge…"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full px-8 py-6 rounded-3xl text-kadam-dark-text text-xl focus:outline-none focus:ring-4 focus:ring-kadam-gold border-2 border-transparent kadam-input"
-              />
-              <button
-                type="submit"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green p-4 rounded-2xl transition-all duration-300 hover:scale-110 shadow-soft"
+              Find My Wizard
+            </button>
+            <Link
+              to="/wizards"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded border border-gray-300 transition-colors text-center"
+            >
+              I'm Feeling Wizardry
+            </Link>
+          </motion.div>
+
+          {/* Quick Test Examples */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="text-sm"
+          >
+            <p className="text-gray-600 mb-3">Quick examples:</p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {quickTests.map((test, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSearchInput(test)}
+                  className="bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs transition-colors border"
+                >
+                  {test}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Error Message */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="mt-6 bg-red-100 border border-red-300 text-red-700 px-6 py-4 rounded-2xl max-w-2xl mx-auto"
               >
-                <FaSearch className="text-xl" />
-              </button>
-            </motion.form>
-          </div>
+                <p className="kadam-body">{error}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Search Results */}
-      {showResults && matchedWizards.length > 0 && (
-        <div id="wizard-results" className="max-w-7xl mx-auto px-6 py-20 bg-kadam-light-green">
-          <h2 className="kadam-heading text-display-lg text-center mb-12">Perfect Matches for You</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {matchedWizards.map((wizard, index) => (
-              <motion.div
-                key={wizard.name}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="kadam-card-elevated overflow-hidden border-2 border-kadam-gold hover:shadow-glow transition-all duration-300"
-              >
-                <div className="h-56 overflow-hidden relative">
-                  <img 
-                    src={wizard.image} 
-                    alt={wizard.name} 
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-kadam-gold text-kadam-deep-green px-4 py-2 rounded-2xl font-bold">
-                    #{index + 1} Match
-                  </div>
-                </div>
-                <div className="p-8">
-                  <div className="flex items-center mb-4">
-                    <wizard.icon className="text-kadam-deep-green text-3xl mr-4" />
-                    <h3 className="kadam-heading text-2xl">{wizard.name}</h3>
-                  </div>
-                  <p className="text-gray-600 mb-6 kadam-body">{wizard.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="bg-kadam-light-green text-kadam-deep-green px-4 py-2 rounded-2xl font-semibold">
-                      {wizard.count} Available
-                    </span>
-                    <Link 
-                      to={wizard.path} 
-                      className="kadam-button-gold text-sm py-3 px-6"
-                    >
-                      Explore
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+      {/* GPT Recommendation Results */}
+      <AnimatePresence>
+        {showGptResult && gptRecommendation && (
+          <div id="gpt-results" className="bg-kadam-light-green py-20">
+            <div className="max-w-7xl mx-auto px-6">
+              <WizardRecommendation
+                recommendation={gptRecommendation}
+                onClose={closeGptResult}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Wizard Types Section */}
       <div className="max-w-7xl mx-auto px-6 py-20 bg-kadam-off-white">
@@ -205,28 +280,31 @@ function Home() {
               className="kadam-card overflow-hidden hover:shadow-medium transition-all duration-300 border border-gray-200"
             >
               <div className="h-56 overflow-hidden relative">
-                <img 
-                  src={wizard.image} 
-                  alt={wizard.name} 
+                <img
+                  src={wizard.image}
+                  alt={wizard.name}
                   className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 kadam-gradient opacity-85 flex flex-col items-center justify-center text-kadam-off-white">
-                  <wizard.icon className="text-5xl mb-4 text-kadam-gold" />
-                  <h3 className="kadam-heading text-2xl mb-3">{wizard.name}</h3>
-                  <p className="text-center px-4 mb-4 kadam-body text-kadam-off-white opacity-90">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50 flex flex-col items-center justify-center text-white">
+                  <wizard.icon className="text-5xl mb-4 text-white drop-shadow-lg" />
+                  <h3 className="text-2xl font-bold mb-3 text-white drop-shadow-lg tracking-wide">
+                    {wizard.name}
+                  </h3>
+                  <p className="text-center px-4 mb-4 text-white/90 drop-shadow text-sm font-medium">
                     {wizard.description}
                   </p>
-                  <span className="bg-kadam-gold text-kadam-deep-green px-6 py-2 rounded-2xl font-bold">
+                  <span className="bg-kadam-gold text-kadam-deep-green px-6 py-2 rounded-2xl font-bold shadow-lg">
                     {wizard.count} Available
                   </span>
                 </div>
               </div>
               <div className="p-6">
-                <Link 
-                  to={wizard.path} 
+                <Link
+                  to={wizard.path}
                   className="text-kadam-deep-green flex items-center justify-center hover:text-kadam-medium-green font-semibold transition-colors kadam-body-medium"
                 >
-                  Find Your {wizard.name} <FaArrowRight className="ml-2" />
+                  Find Your {wizard.name}
+                  <FaArrowRight className="ml-2" />
                 </Link>
               </div>
             </motion.div>
@@ -235,17 +313,17 @@ function Home() {
       </div>
 
       {/* Call to Action */}
-      <div className="kadam-gold-gradient py-20">
+      <div className="bg-kadam-deep-green py-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="kadam-heading text-display-lg mb-8 text-kadam-deep-green">
+          <h2 className="kadam-heading text-display-lg mb-8 text-kadam-off-white">
             Ready to Find Your Perfect Wizard?
           </h2>
-          <p className="text-2xl text-kadam-deep-green mb-12 font-medium kadam-body-medium">
+          <p className="text-2xl text-kadam-off-white mb-12 font-medium kadam-body-medium">
             Join thousands who have transformed their lives with the right guidance.
           </p>
-          <button 
-            onClick={scrollToHero}
-            className="bg-kadam-deep-green hover:bg-kadam-medium-green text-kadam-off-white px-12 py-6 rounded-3xl text-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-medium hover:shadow-large"
+          <button
+            onClick={scrollToSearch}
+            className="bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green px-12 py-6 rounded-3xl text-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-medium hover:shadow-large"
           >
             Find My Wizard
           </button>

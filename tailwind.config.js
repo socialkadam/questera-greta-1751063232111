@@ -45,7 +45,7 @@ export default {
         },
         // New spiritual-tech color palette
         'kadam': {
-          'deep-green': '#013d39',
+          'deep-green': '#023d39',
           'gold': '#fab100',
           'off-white': '#fafaf8',
           'light-green': '#f0fffe',

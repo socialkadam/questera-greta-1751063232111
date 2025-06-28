@@ -1,4 +1,4 @@
-import { FaInstagram, FaLinkedin, FaYoutube, FaHeart } from 'react-icons/fa';
+import { FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 function Footer() {
@@ -10,7 +10,7 @@ function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-4 mb-6">
               <img 
-                src="https://wizardoo.com/logo.png" 
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751085144022-WIZARDOO%20%28GRETA%20LOGO%29.png" 
                 alt="Wizardoo Logo" 
                 className="h-10 w-auto"
                 onError={(e) => {
@@ -25,22 +25,22 @@ function Footer() {
                 WIZARDOO
               </span>
             </div>
-            <p className="text-kadam-gold font-semibold text-xl mb-6 kadam-subheading">
+            <p className="text-kadam-deep-green font-semibold text-xl mb-6 kadam-subheading">
               Your Personal Transformation Engine
             </p>
-            <p className="text-gray-600 max-w-md kadam-body leading-relaxed">
+            <p className="text-kadam-deep-green max-w-md kadam-body leading-relaxed">
               Connect with expert coaches, consultants, counselors, and mentors who will guide you towards clarity, purpose, and meaningful transformation.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="kadam-subheading text-xl mb-6">Quick Links</h4>
+            <h4 className="kadam-subheading text-xl mb-6 text-kadam-deep-green">Quick Links</h4>
             <ul className="space-y-4">
               <li>
                 <Link 
                   to="/" 
-                  className="text-gray-600 hover:text-kadam-deep-green transition-colors kadam-body-medium"
+                  className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
                 >
                   Home
                 </Link>
@@ -48,7 +48,7 @@ function Footer() {
               <li>
                 <Link 
                   to="/about" 
-                  className="text-gray-600 hover:text-kadam-deep-green transition-colors kadam-body-medium"
+                  className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
                 >
                   About
                 </Link>
@@ -56,7 +56,7 @@ function Footer() {
               <li>
                 <Link 
                   to="/contact" 
-                  className="text-gray-600 hover:text-kadam-deep-green transition-colors kadam-body-medium"
+                  className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
                 >
                   Contact
                 </Link>
@@ -64,7 +64,7 @@ function Footer() {
               <li>
                 <Link 
                   to="/privacy" 
-                  className="text-gray-600 hover:text-kadam-deep-green transition-colors kadam-body-medium"
+                  className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
                 >
                   Privacy Policy
                 </Link>
@@ -72,7 +72,7 @@ function Footer() {
               <li>
                 <Link 
                   to="/become-wizard" 
-                  className="text-gray-600 hover:text-kadam-deep-green transition-colors kadam-body-medium"
+                  className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
                 >
                   Become a Wizard
                 </Link>
@@ -82,35 +82,51 @@ function Footer() {
 
           {/* Social Media */}
           <div>
-            <h4 className="kadam-subheading text-xl mb-6">Follow Us</h4>
+            <h4 className="kadam-subheading text-xl mb-6 text-kadam-deep-green">Follow Us</h4>
             <div className="flex space-x-4">
               <a 
                 href="#" 
-                className="text-gray-400 hover:text-kadam-gold transition-colors p-3 rounded-xl hover:bg-gray-100"
+                className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors p-3 rounded-xl hover:bg-gray-100"
               >
                 <FaInstagram size={24} />
               </a>
               <a 
                 href="#" 
-                className="text-gray-400 hover:text-kadam-gold transition-colors p-3 rounded-xl hover:bg-gray-100"
+                className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors p-3 rounded-xl hover:bg-gray-100"
               >
                 <FaLinkedin size={24} />
               </a>
               <a 
                 href="#" 
-                className="text-gray-400 hover:text-kadam-gold transition-colors p-3 rounded-xl hover:bg-gray-100"
+                className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors p-3 rounded-xl hover:bg-gray-100"
               >
                 <FaYoutube size={24} />
               </a>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-          <p className="text-gray-500 flex items-center justify-center kadam-body">
-            Made with <FaHeart className="text-kadam-gold mx-2" /> by Wizardoo © {new Date().getFullYear()}
-          </p>
+      {/* Bottom Section - Navigation Bar Style */}
+      <div className="bg-white shadow-soft border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="text-kadam-deep-green kadam-body">
+            © {new Date().getFullYear()} Wizardoo. All rights reserved.
+          </div>
+          <div className="flex items-center space-x-8">
+            <Link 
+              to="/privacy" 
+              className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
+            >
+              Privacy Policy
+            </Link>
+            <Link 
+              to="/terms" 
+              className="text-kadam-deep-green hover:text-kadam-medium-green transition-colors kadam-body-medium"
+            >
+              Terms & Conditions
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
