@@ -36,7 +36,8 @@ function ScrollToTop() {
           whileHover={{scale: 1.1}}
           whileTap={{scale: 0.9}}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-50 bg-kadam-deep-green hover:bg-kadam-medium-green text-white p-4 rounded-full shadow-large hover:shadow-glow transition-all duration-300"
+          className="fixed bottom-8 right-8 z-50 text-kadam-deep-green p-4 rounded-full shadow-large hover:shadow-glow transition-all duration-300"
+          style={{backgroundColor: '#fab100'}}
           aria-label="Scroll to top"
         >
           <FaArrowUp className="text-xl" />
