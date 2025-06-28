@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-// These will be automatically injected during deployment
-const SUPABASE_URL = 'https://<PROJECT-ID>.supabase.co'
-const SUPABASE_ANON_KEY = '<ANON_KEY>'
+// Supabase project credentials
+const SUPABASE_URL = 'https://fuhzrjphwzbvbgiuoknt.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1aHpyanBod3pidmJnaXVva250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExMzkzNzAsImV4cCI6MjA2NjcxNTM3MH0.9ZLThaYx1taPoA07CxMarXvBobPu3iAsAj15b-uEZp0'
 
-if (SUPABASE_URL === 'https://<PROJECT-ID>.supabase.co' || SUPABASE_ANON_KEY === '<ANON_KEY>') {
-  throw new Error('Missing Supabase environment variables. Please connect your Supabase project.');
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.warn('Missing Supabase environment variables')
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -91,6 +91,7 @@ export const wizardHelpers = {
     if (filters.wizard_type) {
       query = query.eq('wizard_type', filters.wizard_type)
     }
+
     if (filters.specialization) {
       query = query.eq('specialization', filters.specialization)
     }
@@ -156,7 +157,7 @@ export const sessionHelpers = {
       .from('sessions')
       .select(`
         *,
-        wizards!wizard_id(*, profiles!inner(full_name, avatar_url)),
+        wizards!wizard_id(*,profiles!inner(full_name, avatar_url)),
         profiles!seeker_id(full_name, avatar_url)
       `)
 

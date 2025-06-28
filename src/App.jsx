@@ -1,24 +1,24 @@
-import {HashRouter as Router, Routes, Route} from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Wizards from './pages/Wizards';
-import WizardListing from './pages/WizardListing';
-import About from './pages/About';
-import Blog from './pages/Blog';
-import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import SignupWizard from './pages/SignupWizard';
-import WizardPendingApproval from './pages/WizardPendingApproval';
-import Profile from './pages/Profile';
-import {AuthProvider} from './context/AuthContext';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import Home from './pages/Home'
+import Wizards from './pages/Wizards'
+import WizardListing from './pages/WizardListing'
+import About from './pages/About'
+import Blog from './pages/Blog'
+import Contact from './pages/Contact'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import SignupWizard from './pages/SignupWizard'
+import WizardPendingApproval from './pages/WizardPendingApproval'
+import Profile from './pages/Profile'
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="flex flex-col min-h-screen bg-wizardoo-neutral-50">
+        <div className="flex flex-col min-h-screen bg-kadam-off-white">
           <Navbar />
           <main className="flex-grow">
             <Routes>
@@ -39,7 +39,7 @@ function App() {
         </div>
       </AuthProvider>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App
