@@ -1,49 +1,83 @@
-import {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {motion} from 'framer-motion';
-import {FaUser, FaLock, FaEnvelope, FaGoogle, FaApple} from 'react-icons/fa';
-import {FaWandMagicSparkles} from 'react-icons/fa6';
-import {authHelpers} from '../lib/supabase';
-import ScrollToTop from '../components/ScrollToTop';
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FaUser, FaLock, FaEnvelope, FaGoogle, FaApple, FaCheckCircle } from 'react-icons/fa'
+import { FaWandMagicSparkles } from 'react-icons/fa6'
+import { authHelpers } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
+import ScrollToTop from '../components/ScrollToTop'
 
 function Signup() {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const navigate = useNavigate()
+  const { login } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     password: '',
     confirmPassword: ''
-  });
+  })
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({...prev, [field]: value}));
-    setError('');
-  };
+    setFormData(prev => ({ ...prev, [field]: value }))
+    // Clear error when user starts typing
+    if (error) setError('')
+  }
 
   const handleSocialSignup = (provider) => {
     // For now, show a coming soon message
-    alert(`${provider} signup coming soon! Please use email signup for now.`);
-  };
+    alert(`${provider} signup coming soon! Please use email signup for now.`)
+  }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
+  const validateForm = () => {
+    if (!formData.full_name.trim()) {
+      setError('Full name is required')
+      return false
+    }
+
+    if (!formData.email.trim()) {
+      setError('Email is required')
+      return false
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address')
+      return false
+    }
+
+    if (!formData.password) {
+      setError('Password is required')
+      return false
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
+      setError('Password must be at least 6 characters long')
+      return false
     }
 
-    setLoading(true);
-    setError('');
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      return false
+    }
+
+    return true
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (!validateForm()) return
+
+    setLoading(true)
+    setError('')
+    setSuccess(false)
 
     try {
+      console.log('🚀 Starting seeker signup process...')
+      
+      // Sign up the user
       const { data, error: signupError } = await authHelpers.signUp(
         formData.email,
         formData.password,
@@ -51,50 +85,116 @@ function Signup() {
           full_name: formData.full_name,
           role: 'seeker'
         }
-      );
+      )
 
       if (signupError) {
-        throw new Error(signupError.message);
+        throw signupError
       }
 
-      // Success - redirect to home or dashboard
-      navigate('/');
+      if (!data.user) {
+        throw new Error('Failed to create account. Please try again.')
+      }
+
+      console.log('✅ Seeker signup successful!')
       
+      // Show success message
+      setSuccess(true)
+
+      // Auto-login the user
+      if (data.user) {
+        login({
+          id: data.user.id,
+          email: data.user.email,
+          full_name: formData.full_name,
+          role: 'seeker',
+          isVerified: data.user.email_confirmed_at ? true : false
+        })
+
+        // Redirect after short delay to show success
+        setTimeout(() => {
+          navigate('/', { replace: true })
+        }, 2000)
+      }
+
     } catch (err) {
-      console.error('Signup error:', err);
-      setError(err.message || 'Failed to create account');
+      console.error('❌ Signup failed:', err)
+      
+      // Handle specific Supabase errors
+      if (err.message?.includes('already registered')) {
+        setError('An account with this email already exists. Please sign in instead.')
+      } else if (err.message?.includes('Invalid email')) {
+        setError('Please enter a valid email address.')
+      } else if (err.message?.includes('Password')) {
+        setError('Password must be at least 6 characters long.')
+      } else {
+        setError(err.message || 'Failed to create account. Please try again.')
+      }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  // Success screen
+  if (success) {
+    return (
+      <div className="min-h-screen bg-kadam-off-white flex items-center justify-center py-12 px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full"
+        >
+          <div className="kadam-card-elevated p-12 text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6"
+            >
+              <FaCheckCircle className="text-4xl text-green-600" />
+            </motion.div>
+            
+            <h2 className="kadam-heading text-3xl mb-4 text-kadam-deep-green">
+              Welcome to Wizardoo!
+            </h2>
+            
+            <p className="text-gray-600 kadam-body mb-6">
+              Your account has been created successfully. You're being redirected to start your transformation journey!
+            </p>
+
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-kadam-deep-green mx-auto"></div>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-kadam-off-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
-        initial={{opacity: 0, y: 20}}
-        animate={{opacity: 1, y: 0}}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full space-y-8"
       >
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
+        <div className="kadam-card-elevated p-8 md:p-10">
           <div className="text-center mb-8">
-            <h2 className="font-display text-3xl font-bold text-kadam-deep-green">Join Wizardoo</h2>
-            <p className="mt-2 text-gray-600">
+            <h2 className="kadam-heading text-3xl text-kadam-deep-green">Join Wizardoo</h2>
+            <p className="mt-2 text-gray-600 kadam-body">
               Start your transformation journey today
             </p>
           </div>
 
           {/* Social Signup Buttons */}
           <div className="space-y-3 mb-6">
-            <button 
+            <button
               onClick={() => handleSocialSignup('Google')}
-              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors kadam-body-medium"
             >
               <FaGoogle className="mr-3 text-red-500" />
               Sign up with Google
             </button>
-            <button 
+            <button
               onClick={() => handleSocialSignup('Apple')}
-              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors kadam-body-medium"
             >
               <FaApple className="mr-3 text-black" />
               Sign up with Apple
@@ -106,77 +206,88 @@ function Signup() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or sign up with email</span>
+              <span className="px-2 bg-kadam-off-white text-gray-500 kadam-body">Or sign up with email</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Full Name</label>
+              <label className="block text-gray-700 kadam-body-medium mb-2">Full Name *</label>
               <div className="relative">
                 <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
+                  className="kadam-input pl-10"
                   placeholder="Enter your full name"
                   value={formData.full_name}
                   onChange={(e) => handleInputChange('full_name', e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Email Address</label>
+              <label className="block text-gray-700 kadam-body-medium mb-2">Email Address *</label>
               <div className="relative">
                 <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="email"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
+                  className="kadam-input pl-10"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Password</label>
+              <label className="block text-gray-700 kadam-body-medium mb-2">Password *</label>
               <div className="relative">
                 <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="password"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
-                  placeholder="Create a password"
+                  className="kadam-input pl-10"
+                  placeholder="Create a password (min 6 characters)"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Confirm Password</label>
+              <label className="block text-gray-700 kadam-body-medium mb-2">Confirm Password *</label>
               <div className="relative">
                 <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="password"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kadam-gold focus:border-transparent transition-all"
+                  className="kadam-input pl-10"
                   placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
 
             {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
-                {error}
-              </div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl kadam-body"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <div className="flex items-center">
               <input
@@ -185,14 +296,15 @@ function Signup() {
                 type="checkbox"
                 required
                 className="h-4 w-4 text-kadam-gold focus:ring-kadam-gold border-gray-300 rounded"
+                disabled={loading}
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700 kadam-body">
                 I agree to the{' '}
-                <a href="#" className="text-kadam-deep-green hover:text-kadam-medium-green">
+                <a href="#" className="text-kadam-deep-green hover:text-kadam-medium-green kadam-body-medium">
                   Terms and Conditions
                 </a>
                 {' '}and{' '}
-                <a href="#" className="text-kadam-deep-green hover:text-kadam-medium-green">
+                <a href="#" className="text-kadam-deep-green hover:text-kadam-medium-green kadam-body-medium">
                   Privacy Policy
                 </a>
               </label>
@@ -201,7 +313,7 @@ function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-kadam-deep-green hover:bg-kadam-medium-green text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+              className="w-full kadam-button disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -215,9 +327,9 @@ function Signup() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-gray-600 kadam-body">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-kadam-deep-green hover:text-kadam-medium-green">
+              <Link to="/login" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
                 Sign in here
               </Link>
             </p>
@@ -230,12 +342,12 @@ function Signup() {
               <h3 className="kadam-subheading text-lg mb-2 text-kadam-deep-green">
                 Want to become a Wizard?
               </h3>
-              <p className="text-gray-600 text-sm mb-3">
+              <p className="text-gray-600 text-sm mb-3 kadam-body">
                 Share your expertise and help others transform their lives
               </p>
               <Link
                 to="/signup-wizard"
-                className="inline-block bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+                className="inline-block bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green font-semibold py-2 px-4 rounded-lg transition-all duration-300 kadam-body-medium"
               >
                 Apply as Wizard
               </Link>
@@ -243,10 +355,9 @@ function Signup() {
           </div>
         </div>
       </motion.div>
-
       <ScrollToTop />
     </div>
-  );
+  )
 }
 
-export default Signup;
+export default Signup
