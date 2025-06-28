@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {Link,useNavigate} from 'react-router-dom';
 import {motion} from 'framer-motion';
 import {FaUser,FaLock,FaEnvelope,FaGoogle,FaApple} from 'react-icons/fa';
+import ScrollToTop from '../components/ScrollToTop';
 
 function Signup() {
   const navigate=useNavigate();
@@ -155,6 +156,9 @@ function Signup() {
         </div>
 
       </motion.div>
+
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
     </div>
   );
 }

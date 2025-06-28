@@ -1,6 +1,7 @@
 import {motion} from 'framer-motion';
 import {FaUserTie,FaBrain,FaHeart,FaLightbulb} from 'react-icons/fa';
 import {Link} from 'react-router-dom';
+import ScrollToTop from '../components/ScrollToTop';
 
 const wizardCategories=[
   {
@@ -146,6 +147,8 @@ function Wizards() {
         </div>
       </div>
 
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import {motion} from 'framer-motion';
 import {FaHeart,FaUsers,FaStar,FaGlobe} from 'react-icons/fa';
+import ScrollToTop from '../components/ScrollToTop';
 
 function About() {
   return (
@@ -119,6 +120,9 @@ function About() {
 
         </div>
       </div>
+
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
     </div>
   );
 }

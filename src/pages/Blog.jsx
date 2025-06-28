@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {motion} from 'framer-motion';
 import {FaCalendar,FaUser,FaArrowRight,FaEnvelope,FaUserAlt} from 'react-icons/fa';
+import ScrollToTop from '../components/ScrollToTop';
 
 const blogPosts=[
   {
@@ -163,6 +164,9 @@ function Blog() {
           </div>
         </div>
       </div>
+
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
     </div>
   );
 }

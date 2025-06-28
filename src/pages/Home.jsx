@@ -4,6 +4,7 @@ import {useState} from 'react';
 import {FaSearch,FaArrowRight,FaUserTie,FaBrain,FaHeart,FaLightbulb,FaSpinner} from 'react-icons/fa';
 import {getWizardRecommendation,getWizardDetailsByType} from '../api/gptMatch';
 import WizardRecommendation from '../components/WizardRecommendation';
+import ScrollToTop from '../components/ScrollToTop';
 
 const wizardTypes=[
   {
@@ -120,16 +121,13 @@ function Home() {
       <div id="search-section" className="min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center px-4 sm:px-6" style={{backgroundColor: '#013d39'}}>
         <div className="max-w-4xl w-full text-center">
           
-          {/* Main Heading */}
+          {/* Main Heading - Updated */}
           <motion.div 
             initial={{opacity: 0,y: 30}} 
             animate={{opacity: 1,y: 0}} 
-            className="mb-6 sm:mb-8"
+            className="mb-8 sm:mb-12"
           >
-            <h1 className="kadam-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 sm:mb-6 text-white leading-tight">
-              Find Your Wizard
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed kadam-body-medium px-4">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white max-w-4xl mx-auto leading-relaxed kadam-body-medium px-4 font-medium">
               Unlock clarity, purpose, and momentum with the perfect coach, consultant, counselor, or mentor — matched by AI, guided by wisdom.
             </p>
           </motion.div>
@@ -145,10 +143,10 @@ function Home() {
             <div className="relative max-w-xl mx-auto px-4">
               <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 focus-within:shadow-xl">
                 
-                {/* Input Field */}
+                {/* Input Field - Updated placeholder */}
                 <input 
                   type="text"
-                  placeholder="How can we help? (e.g., 'I keep procrastinating and feel burned out at work')"
+                  placeholder="e.g., 'I keep procrastinating and feel burned out at work'"
                   value={searchInput}
                   onChange={(e)=> setSearchInput(e.target.value)}
                   className="flex-1 py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base lg:text-lg focus:outline-none bg-transparent rounded-full"
@@ -290,13 +288,13 @@ function Home() {
         </div>
       </div>
 
-      {/* Call to Action */}
+      {/* Call to Action - Updated text */}
       <div className="bg-kadam-deep-green py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl mb-6 sm:mb-8 text-kadam-off-white">
+          <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl mb-6 sm:mb-8 text-white">
             Ready to Find Your Perfect Wizard?
           </h2>
-          <p className="text-lg sm:text-xl lg:text-2xl text-kadam-off-white mb-8 sm:mb-12 font-medium kadam-body-medium px-4">
+          <p className="text-lg sm:text-xl lg:text-2xl text-white mb-8 sm:mb-12 font-medium kadam-body-medium px-4">
             Join thousands who have transformed their lives with the right guidance.
           </p>
           <button 
@@ -307,6 +305,9 @@ function Home() {
           </button>
         </div>
       </div>
+
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
 
     </div>
   );

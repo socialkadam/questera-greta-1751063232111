@@ -2,6 +2,7 @@ import {useState,useEffect} from 'react';
 import {useSearchParams,useNavigate} from 'react-router-dom';
 import {motion} from 'framer-motion';
 import {FaUserTie,FaBrain,FaHeart,FaLightbulb,FaStar,FaMapMarkerAlt,FaDollarSign,FaVideo,FaPhone,FaComments} from 'react-icons/fa';
+import ScrollToTop from '../components/ScrollToTop';
 
 // Mock wizard data with specializations
 const allWizards=[
@@ -488,6 +489,9 @@ function WizardListing() {
         )}
 
       </div>
+
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
     </div>
   );
 }

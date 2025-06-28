@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {motion} from 'framer-motion';
 import {FaEnvelope,FaPhone,FaMapMarkerAlt,FaPaperPlane} from 'react-icons/fa';
+import ScrollToTop from '../components/ScrollToTop';
 
 function Contact() {
   const [formData,setFormData]=useState({
@@ -156,6 +157,9 @@ function Contact() {
           </div>
         </div>
       </div>
+
+      {/* Scroll to Top Component */}
+      <ScrollToTop />
     </div>
   );
 }
