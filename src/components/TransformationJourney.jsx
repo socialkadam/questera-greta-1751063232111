@@ -1,0 +1,736 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaCheckCircle, FaArrowRight, FaArrowLeft, FaStar, FaMapMarkerAlt, FaDollarSign, FaVideo, FaPhone, FaComments, FaCalendarAlt, FaCreditCard, FaGem } from 'react-icons/fa';
+import { FaWandMagicSparkles } from 'react-icons/fa6';
+
+// Mock wizard data for demonstration
+const mockWizards = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    title: "Senior Career Performance Coach",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
+    rating: 4.9,
+    reviews: 127,
+    experience: "8 years",
+    location: "San Francisco, CA",
+    price: "$150/session",
+    specialization: "career",
+    bio: "Specialized in helping professionals overcome procrastination and workplace burnout.",
+    availability: ["Video Call", "Phone", "Chat"],
+    lapsulaId: "sarah-johnson-coach"
+  },
+  {
+    id: 2,
+    name: "Marcus Chen",
+    title: "Certified Fitness & Wellness Coach",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
+    rating: 4.8,
+    reviews: 203,
+    experience: "6 years",
+    location: "Los Angeles, CA",
+    price: "$120/session",
+    specialization: "fitness",
+    bio: "Expert in sustainable fitness transformations and healthy lifestyle design.",
+    availability: ["Video Call", "Phone"],
+    lapsulaId: "marcus-chen-coach"
+  },
+  {
+    id: 3,
+    name: "Emma Rodriguez",
+    title: "Productivity & Time Management Coach",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
+    rating: 4.9,
+    reviews: 89,
+    experience: "5 years",
+    location: "New York, NY",
+    price: "$130/session",
+    specialization: "productivity",
+    bio: "Helps busy professionals create efficient systems and overcome procrastination.",
+    availability: ["Video Call", "Chat"],
+    lapsulaId: "emma-rodriguez-coach"
+  }
+];
+
+function TransformationJourney({ recommendation, onClose, userInput }) {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedWizard, setSelectedWizard] = useState(null);
+  const [bookingData, setBookingData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const steps = [
+    { id: 1, name: "Discover", description: "Find your perfect match", icon: FaWandMagicSparkles },
+    { id: 2, name: "Connect", description: "Choose your wizard", icon: FaStar },
+    { id: 3, name: "Schedule", description: "Book your session", icon: FaCalendarAlt },
+    { id: 4, name: "Transform", description: "Confirm & pay", icon: FaCreditCard },
+    { id: 5, name: "Grow", description: "Begin your journey", icon: FaGem }
+  ];
+
+  const nextStep = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(prev => prev - 1);
+    }
+  };
+
+  const handleWizardSelect = (wizard) => {
+    setSelectedWizard(wizard);
+    nextStep();
+  };
+
+  const handleBookingConfirm = (bookingDetails) => {
+    setBookingData(bookingDetails);
+    nextStep();
+  };
+
+  const handlePaymentSuccess = () => {
+    nextStep();
+  };
+
+  const getAvailabilityIcon = (method) => {
+    switch (method) {
+      case 'Video Call': return <FaVideo className="text-green-600" />;
+      case 'Phone': return <FaPhone className="text-blue-600" />;
+      case 'Chat': return <FaComments className="text-purple-600" />;
+      default: return null;
+    }
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <DiscoverStep recommendation={recommendation} userInput={userInput} onNext={nextStep} />;
+      case 2:
+        return <ConnectStep wizards={mockWizards} onWizardSelect={handleWizardSelect} onBack={prevStep} />;
+      case 3:
+        return <ScheduleStep wizard={selectedWizard} onBookingConfirm={handleBookingConfirm} onBack={prevStep} />;
+      case 4:
+        return <TransformStep wizard={selectedWizard} bookingData={bookingData} onPaymentSuccess={handlePaymentSuccess} onBack={prevStep} />;
+      case 5:
+        return <GrowStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden"
+      >
+        {/* Header with Progress Bar */}
+        <div className="bg-kadam-deep-green p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-white kadam-heading">
+              Your Transformation Journey
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-white hover:text-kadam-gold transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="relative">
+            <div className="flex items-center justify-between">
+              {steps.map((step, index) => {
+                const StepIcon = step.icon;
+                const isCompleted = currentStep > step.id;
+                const isCurrent = currentStep === step.id;
+                
+                return (
+                  <div key={step.id} className="flex flex-col items-center relative">
+                    {/* Connection Line */}
+                    {index < steps.length - 1 && (
+                      <div className="absolute top-6 left-12 w-full h-0.5 bg-white/30">
+                        <div 
+                          className="h-full bg-kadam-gold transition-all duration-500"
+                          style={{ width: isCompleted ? '100%' : '0%' }}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Step Circle */}
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        scale: isCurrent ? 1.1 : 1,
+                        backgroundColor: isCompleted ? '#fab100' : isCurrent ? '#fab100' : 'rgba(255,255,255,0.2)'
+                      }}
+                      className="w-12 h-12 rounded-full flex items-center justify-center relative z-10"
+                    >
+                      {isCompleted ? (
+                        <FaCheckCircle className="text-kadam-deep-green text-xl" />
+                      ) : (
+                        <StepIcon className={`text-lg ${isCurrent ? 'text-kadam-deep-green' : 'text-white'}`} />
+                      )}
+                    </motion.div>
+                    
+                    {/* Step Label */}
+                    <div className="mt-3 text-center">
+                      <div className={`font-semibold ${isCurrent || isCompleted ? 'text-kadam-gold' : 'text-white/70'}`}>
+                        {step.name}
+                      </div>
+                      <div className="text-xs text-white/60">
+                        {step.description}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Step Content */}
+        <div className="h-[calc(90vh-200px)] overflow-y-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3 }}
+              className="h-full"
+            >
+              {renderStepContent()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// Step 1: Discover
+function DiscoverStep({ recommendation, userInput, onNext }) {
+  return (
+    <div className="p-8">
+      <div className="text-center mb-8">
+        <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
+          Perfect Match Found! 🎯
+        </h3>
+        <p className="text-gray-600 text-lg kadam-body">
+          Based on your input: "<em>{userInput}</em>"
+        </p>
+      </div>
+
+      <div className="max-w-2xl mx-auto bg-kadam-light-green rounded-2xl p-8 text-center">
+        <div className="text-6xl mb-6">{recommendation.wizard.icon}</div>
+        <h4 className="text-2xl font-bold text-kadam-deep-green mb-4 kadam-heading">
+          {recommendation.wizard_type.charAt(0).toUpperCase() + recommendation.wizard_type.slice(1)}
+        </h4>
+        <p className="text-gray-700 text-lg mb-6 kadam-body">
+          {recommendation.personalized_explanation}
+        </p>
+        
+        <div className="flex items-center justify-center space-x-4 mb-8">
+          <div className="flex items-center">
+            <span className="text-kadam-deep-green font-semibold">Specialization:</span>
+            <span className="ml-2 bg-kadam-gold text-kadam-deep-green px-3 py-1 rounded-full font-semibold">
+              {recommendation.goal_area}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="text-kadam-deep-green font-semibold">Match Confidence:</span>
+            <span className="ml-2 text-2xl font-bold text-kadam-deep-green">
+              {recommendation.confidence}%
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={onNext}
+          className="kadam-button text-lg px-8 py-4 inline-flex items-center"
+        >
+          See Your Top 3 Matches
+          <FaArrowRight className="ml-3" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Step 2: Connect
+function ConnectStep({ wizards, onWizardSelect, onBack }) {
+  const getAvailabilityIcon = (method) => {
+    switch (method) {
+      case 'Video Call': return <FaVideo className="text-green-600" />;
+      case 'Phone': return <FaPhone className="text-blue-600" />;
+      case 'Chat': return <FaComments className="text-purple-600" />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="p-8">
+      <div className="text-center mb-8">
+        <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
+          Choose Your Wizard
+        </h3>
+        <p className="text-gray-600 text-lg kadam-body">
+          Here are your top 3 recommended wizards based on your needs
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {wizards.map((wizard, index) => (
+          <motion.div
+            key={wizard.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden hover:border-kadam-gold hover:shadow-xl transition-all duration-300"
+          >
+            {index === 0 && (
+              <div className="bg-kadam-gold text-kadam-deep-green px-4 py-2 text-center font-semibold text-sm">
+                ⭐ TOP RECOMMENDED
+              </div>
+            )}
+            
+            <div className="p-6">
+              <div className="flex items-center space-x-4 mb-4">
+                <img
+                  src={wizard.image}
+                  alt={wizard.name}
+                  className="w-16 h-16 rounded-full object-cover border-2 border-kadam-gold shadow-md"
+                />
+                <div>
+                  <h4 className="font-bold text-lg text-gray-800">{wizard.name}</h4>
+                  <p className="text-gray-600 text-sm">{wizard.title}</p>
+                  <div className="flex items-center mt-1">
+                    <FaStar className="text-yellow-400 text-sm mr-1" />
+                    <span className="text-sm font-semibold text-gray-700">{wizard.rating}</span>
+                    <span className="text-sm text-gray-500 ml-1">({wizard.reviews})</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed">{wizard.bio}</p>
+
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center text-sm text-gray-600">
+                  <FaMapMarkerAlt className="mr-2 text-gray-400" />
+                  <span>{wizard.location}</span>
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <FaDollarSign className="mr-2 text-gray-400" />
+                  <span className="font-semibold text-gray-800">{wizard.price}</span>
+                  <span className="ml-2">• {wizard.experience}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3 mb-4">
+                <span className="text-sm text-gray-500">Available via:</span>
+                {wizard.availability.map((method, idx) => (
+                  <div key={idx} className="flex items-center space-x-1">
+                    {getAvailabilityIcon(method)}
+                    <span className="text-xs text-gray-600">{method}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => onWizardSelect(wizard)}
+                className="w-full bg-gradient-to-r from-kadam-deep-green to-kadam-medium-green hover:from-kadam-medium-green hover:to-kadam-deep-green text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+              >
+                Book Session
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="flex justify-center">
+        <button
+          onClick={onBack}
+          className="kadam-button-outline inline-flex items-center"
+        >
+          <FaArrowLeft className="mr-2" />
+          Back to Results
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Step 3: Schedule
+function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [sessionType, setSessionType] = useState('video');
+
+  // Mock available times
+  const availableTimes = [
+    '9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'
+  ];
+
+  const handleConfirmBooking = () => {
+    if (selectedDate && selectedTime) {
+      onBookingConfirm({
+        wizard: wizard,
+        date: selectedDate,
+        time: selectedTime,
+        sessionType: sessionType,
+        lapsulaBookingId: `booking_${wizard.lapsulaId}_${Date.now()}`
+      });
+    }
+  };
+
+  return (
+    <div className="p-8">
+      <div className="text-center mb-8">
+        <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
+          Schedule Your Session
+        </h3>
+        <p className="text-gray-600 text-lg kadam-body">
+          Book a session with {wizard.name}
+        </p>
+      </div>
+
+      <div className="max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Wizard Info */}
+          <div className="bg-kadam-light-green rounded-2xl p-6">
+            <div className="flex items-center space-x-4 mb-4">
+              <img
+                src={wizard.image}
+                alt={wizard.name}
+                className="w-16 h-16 rounded-full object-cover border-2 border-kadam-gold"
+              />
+              <div>
+                <h4 className="font-bold text-lg text-kadam-deep-green">{wizard.name}</h4>
+                <p className="text-gray-600">{wizard.title}</p>
+                <p className="text-kadam-deep-green font-semibold">{wizard.price}</p>
+              </div>
+            </div>
+            
+            {/* Session Type Selection */}
+            <div className="mb-6">
+              <h5 className="font-semibold text-kadam-deep-green mb-3">Session Type</h5>
+              <div className="space-y-2">
+                {wizard.availability.map((type) => (
+                  <label key={type} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="sessionType"
+                      value={type.toLowerCase().replace(' ', '')}
+                      checked={sessionType === type.toLowerCase().replace(' ', '')}
+                      onChange={(e) => setSessionType(e.target.value)}
+                      className="mr-3"
+                    />
+                    <span className="capitalize">{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Lapsula Calendar Integration Placeholder */}
+          <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
+            <h5 className="font-semibold text-kadam-deep-green mb-4">Select Date & Time</h5>
+            
+            {/* Mock Calendar */}
+            <div className="mb-6">
+              <div className="grid grid-cols-7 gap-2 mb-4">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                  <div key={day} className="text-center font-semibold text-gray-600 p-2">
+                    {day}
+                  </div>
+                ))}
+              </div>
+              
+              <div className="grid grid-cols-7 gap-2">
+                {Array.from({ length: 31 }, (_, i) => i + 1).map(date => (
+                  <button
+                    key={date}
+                    onClick={() => setSelectedDate(date)}
+                    className={`p-2 rounded-lg text-center transition-colors ${
+                      selectedDate === date
+                        ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
+                        : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    {date}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Available Times */}
+            {selectedDate && (
+              <div>
+                <h6 className="font-semibold text-kadam-deep-green mb-3">Available Times</h6>
+                <div className="grid grid-cols-2 gap-2">
+                  {availableTimes.map(time => (
+                    <button
+                      key={time}
+                      onClick={() => setSelectedTime(time)}
+                      className={`p-3 rounded-lg text-center transition-colors ${
+                        selectedTime === time
+                          ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
+                          : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between mt-8">
+          <button
+            onClick={onBack}
+            className="kadam-button-outline inline-flex items-center"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back to Wizards
+          </button>
+
+          <button
+            onClick={handleConfirmBooking}
+            disabled={!selectedDate || !selectedTime}
+            className="kadam-button disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
+          >
+            Confirm Booking
+            <FaArrowRight className="ml-2" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Step 4: Transform (Payment)
+function TransformStep({ wizard, bookingData, onPaymentSuccess, onBack }) {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handlePayment = async () => {
+    setIsProcessing(true);
+    
+    // Simulate payment processing with Lapsula
+    setTimeout(() => {
+      setIsProcessing(false);
+      onPaymentSuccess();
+    }, 2000);
+  };
+
+  return (
+    <div className="p-8">
+      <div className="text-center mb-8">
+        <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
+          Confirm & Pay
+        </h3>
+        <p className="text-gray-600 text-lg kadam-body">
+          Secure your transformation session
+        </p>
+      </div>
+
+      <div className="max-w-2xl mx-auto">
+        {/* Booking Summary */}
+        <div className="bg-kadam-light-green rounded-2xl p-6 mb-8">
+          <h4 className="font-semibold text-kadam-deep-green mb-4">Booking Summary</h4>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span>Wizard:</span>
+              <span className="font-semibold">{wizard.name}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Date:</span>
+              <span className="font-semibold">Dec {bookingData.date}, 2024</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Time:</span>
+              <span className="font-semibold">{bookingData.time}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Session Type:</span>
+              <span className="font-semibold capitalize">{bookingData.sessionType}</span>
+            </div>
+            <div className="flex justify-between border-t pt-3 mt-3">
+              <span className="font-semibold">Total:</span>
+              <span className="font-bold text-lg">{wizard.price}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Form Placeholder */}
+        <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 mb-8">
+          <h4 className="font-semibold text-kadam-deep-green mb-4">Payment Information</h4>
+          
+          {/* This would integrate with Lapsula's payment system */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-gray-700 mb-2">Card Number</label>
+              <input
+                type="text"
+                placeholder="**** **** **** 1234"
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                disabled={isProcessing}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-700 mb-2">Expiry</label>
+                <input
+                  type="text"
+                  placeholder="MM/YY"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  disabled={isProcessing}
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 mb-2">CVV</label>
+                <input
+                  type="text"
+                  placeholder="123"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  disabled={isProcessing}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between">
+          <button
+            onClick={onBack}
+            disabled={isProcessing}
+            className="kadam-button-outline inline-flex items-center disabled:opacity-50"
+          >
+            <FaArrowLeft className="mr-2" />
+            Back to Schedule
+          </button>
+
+          <button
+            onClick={handlePayment}
+            disabled={isProcessing}
+            className="kadam-button disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
+          >
+            {isProcessing ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Processing...
+              </>
+            ) : (
+              <>
+                <FaCreditCard className="mr-2" />
+                Confirm Payment
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Step 5: Grow (Success)
+function GrowStep({ wizard, bookingData, onClose }) {
+  return (
+    <div className="p-8 text-center">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="max-w-2xl mx-auto">
+          {/* Success Animation */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="inline-flex items-center justify-center w-24 h-24 bg-kadam-gold rounded-full mb-8"
+          >
+            <FaGem className="text-4xl text-kadam-deep-green" />
+          </motion.div>
+
+          <h3 className="text-4xl font-bold text-kadam-deep-green mb-6 kadam-heading">
+            🎉 Congratulations, Action Taker! 🎉
+          </h3>
+
+          <div className="bg-gradient-to-br from-kadam-light-green to-white rounded-2xl p-8 mb-8">
+            <p className="text-xl text-gray-700 mb-6 kadam-body leading-relaxed">
+              You've taken the most important step in your transformation journey - 
+              <strong className="text-kadam-deep-green"> you chose to act!</strong>
+            </p>
+
+            <div className="bg-white rounded-xl p-6 mb-6 border-2 border-kadam-gold">
+              <h4 className="font-semibold text-kadam-deep-green mb-3">Your Session Details</h4>
+              <div className="space-y-2 text-left">
+                <p><strong>Wizard:</strong> {wizard.name}</p>
+                <p><strong>Date & Time:</strong> Dec {bookingData.date}, 2024 at {bookingData.time}</p>
+                <p><strong>Session Type:</strong> {bookingData.sessionType}</p>
+                <p><strong>Booking ID:</strong> {bookingData.lapsulaBookingId}</p>
+              </div>
+            </div>
+
+            <div className="text-lg text-gray-700 kadam-body space-y-4">
+              <p>
+                🌟 You've joined thousands of seekers who chose growth over comfort, 
+                action over hesitation, and transformation over status quo.
+              </p>
+              
+              <p>
+                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, 
+                and personalized strategies designed specifically for your journey.
+              </p>
+              
+              <p className="bg-kadam-gold/20 p-4 rounded-xl">
+                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. 
+                Your journey to unlocking your full human potential starts now!
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-gray-600 kadam-body">
+              Check your email for session details and preparation materials.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => window.location.href = '/dashboard'}
+                className="kadam-button inline-flex items-center"
+              >
+                <FaWandMagicSparkles className="mr-2" />
+                Go to Dashboard
+              </button>
+              
+              <button
+                onClick={onClose}
+                className="kadam-button-outline"
+              >
+                Continue Exploring
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-8 text-kadam-deep-green font-semibold kadam-body">
+            ✨ May wisdom guide your path and growth illuminate your journey! ✨
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+export default TransformationJourney;
