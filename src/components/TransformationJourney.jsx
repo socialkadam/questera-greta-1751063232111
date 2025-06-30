@@ -62,23 +62,17 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
     {
       id: 1,
       name: "Discover",
-      description: "Find your perfect match",
+      description: "Find & choose your wizard",
       icon: FaWandMagicSparkles
     },
     {
       id: 2,
-      name: "Connect",
-      description: "Choose your wizard",
-      icon: FaStar
-    },
-    {
-      id: 3,
       name: "Schedule",
       description: "Book & pay for your session",
       icon: FaCalendarAlt
     },
     {
-      id: 4,
+      id: 3,
       name: "Transform",
       description: "Celebration & confirmation",
       icon: FaGem
@@ -107,24 +101,18 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
     nextStep();
   };
 
-  const getAvailabilityIcon = (method) => {
-    switch (method) {
-      case 'Video Call': return <FaVideo className="text-green-600" />;
-      case 'Phone': return <FaPhone className="text-blue-600" />;
-      case 'Chat': return <FaComments className="text-purple-600" />;
-      default: return null;
-    }
-  };
-
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <DiscoverStep recommendation={recommendation} userInput={userInput} onNext={nextStep} />;
+        return <DiscoverStep 
+          recommendation={recommendation} 
+          userInput={userInput} 
+          wizards={mockWizards}
+          onWizardSelect={handleWizardSelect}
+        />;
       case 2:
-        return <ConnectStep wizards={mockWizards} onWizardSelect={handleWizardSelect} onBack={prevStep} />;
-      case 3:
         return <ScheduleStep wizard={selectedWizard} onBookingConfirm={handleBookingConfirm} onBack={prevStep} />;
-      case 4:
+      case 3:
         return <TransformStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
       default:
         return null;
@@ -137,7 +125,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-white rounded-3xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-hidden"
       >
         {/* Header with Progress Bar */}
         <div className="bg-kadam-deep-green p-6">
@@ -155,7 +143,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
             </button>
           </div>
 
-          {/* Progress Bar */}
+          {/* Progress Bar - Now 3 Steps */}
           <div className="relative">
             <div className="flex items-center justify-between">
               {steps.map((step, index) => {
@@ -227,57 +215,8 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
   );
 }
 
-// Step 1: Discover
-function DiscoverStep({ recommendation, userInput, onNext }) {
-  return (
-    <div className="p-8">
-      <div className="text-center mb-8">
-        <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
-          Perfect Match Found! 🎯
-        </h3>
-        <p className="text-gray-600 text-lg kadam-body">
-          Based on your input: "<em>{userInput}</em>"
-        </p>
-      </div>
-
-      <div className="max-w-2xl mx-auto bg-kadam-light-green rounded-2xl p-8 text-center">
-        <div className="text-6xl mb-6">{recommendation.wizard.icon}</div>
-        <h4 className="text-2xl font-bold text-kadam-deep-green mb-4 kadam-heading">
-          {recommendation.wizard_type.charAt(0).toUpperCase() + recommendation.wizard_type.slice(1)}
-        </h4>
-        <p className="text-gray-700 text-lg mb-6 kadam-body">
-          {recommendation.personalized_explanation}
-        </p>
-
-        <div className="flex items-center justify-center space-x-4 mb-8">
-          <div className="flex items-center">
-            <span className="text-kadam-deep-green font-semibold">Specialization:</span>
-            <span className="ml-2 bg-kadam-gold text-kadam-deep-green px-3 py-1 rounded-full font-semibold">
-              {recommendation.goal_area}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-kadam-deep-green font-semibold">Match Confidence:</span>
-            <span className="ml-2 text-2xl font-bold text-kadam-deep-green">
-              {recommendation.confidence}%
-            </span>
-          </div>
-        </div>
-
-        <button
-          onClick={onNext}
-          className="kadam-button text-lg px-8 py-4 inline-flex items-center"
-        >
-          See Your Top 3 Matches
-          <FaArrowRight className="ml-3" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Step 2: Connect
-function ConnectStep({ wizards, onWizardSelect, onBack }) {
+// Step 1: Discover & Choose (Combined)
+function DiscoverStep({ recommendation, userInput, wizards, onWizardSelect }) {
   const getAvailabilityIcon = (method) => {
     switch (method) {
       case 'Video Call': return <FaVideo className="text-green-600" />;
@@ -289,97 +228,139 @@ function ConnectStep({ wizards, onWizardSelect, onBack }) {
 
   return (
     <div className="p-8">
+      {/* AI Recommendation Header */}
       <div className="text-center mb-8">
         <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
-          Choose Your Wizard
+          Perfect Match Found! 🎯
         </h3>
-        <p className="text-gray-600 text-lg kadam-body">
-          Here are your top 3 recommended wizards based on your needs
+        <p className="text-gray-600 text-lg kadam-body mb-6">
+          Based on your input: "<em>{userInput}</em>"
         </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {wizards.map((wizard, index) => (
-          <motion.div
-            key={wizard.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden hover:border-kadam-gold hover:shadow-xl transition-all duration-300"
-          >
-            {index === 0 && (
-              <div className="bg-kadam-gold text-kadam-deep-green px-4 py-2 text-center font-semibold text-sm">
-                ⭐ TOP RECOMMENDED
-              </div>
-            )}
-
-            <div className="p-6">
-              <div className="flex items-center space-x-4 mb-4">
-                <img
-                  src={wizard.image}
-                  alt={wizard.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-kadam-gold shadow-md"
-                />
-                <div>
-                  <h4 className="font-bold text-lg text-gray-800">{wizard.name}</h4>
-                  <p className="text-gray-600 text-sm">{wizard.title}</p>
-                  <div className="flex items-center mt-1">
-                    <FaStar className="text-yellow-400 text-sm mr-1" />
-                    <span className="text-sm font-semibold text-gray-700">{wizard.rating}</span>
-                    <span className="text-sm text-gray-500 ml-1">({wizard.reviews})</span>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-gray-600 text-sm mb-4 leading-relaxed">{wizard.bio}</p>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaMapMarkerAlt className="mr-2 text-gray-400" />
-                  <span>{wizard.location}</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaDollarSign className="mr-2 text-gray-400" />
-                  <span className="font-semibold text-gray-800">{wizard.price}</span>
-                  <span className="ml-2">• {wizard.experience}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 mb-4">
-                <span className="text-sm text-gray-500">Available via:</span>
-                {wizard.availability.map((method, idx) => (
-                  <div key={idx} className="flex items-center space-x-1">
-                    {getAvailabilityIcon(method)}
-                    <span className="text-xs text-gray-600">{method}</span>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => onWizardSelect(wizard)}
-                className="w-full bg-gradient-to-r from-kadam-deep-green to-kadam-medium-green hover:from-kadam-medium-green hover:to-kadam-deep-green text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
-              >
-                Book Session
-              </button>
+        
+        {/* Quick AI Summary */}
+        <div className="max-w-3xl mx-auto bg-kadam-light-green rounded-2xl p-6 mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="text-4xl mr-4">{recommendation.wizard.icon}</div>
+            <div>
+              <h4 className="text-xl font-bold text-kadam-deep-green kadam-heading">
+                {recommendation.wizard_type.charAt(0).toUpperCase() + recommendation.wizard_type.slice(1)} Recommended
+              </h4>
+              <p className="text-gray-700 kadam-body">
+                {recommendation.short_reason}
+              </p>
             </div>
-          </motion.div>
-        ))}
+          </div>
+          
+          <div className="flex items-center justify-center space-x-6">
+            <div className="flex items-center">
+              <span className="text-kadam-deep-green font-semibold">Specialization:</span>
+              <span className="ml-2 bg-kadam-gold text-kadam-deep-green px-3 py-1 rounded-full font-semibold">
+                {recommendation.goal_area}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <span className="text-kadam-deep-green font-semibold">Match:</span>
+              <span className="ml-2 text-xl font-bold text-kadam-deep-green">
+                {recommendation.confidence}%
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="flex justify-center">
-        <button
-          onClick={onBack}
-          className="kadam-button-outline inline-flex items-center"
-        >
-          <FaArrowLeft className="mr-2" />
-          Back to Results
-        </button>
+      {/* Wizard Selection */}
+      <div className="mb-8">
+        <h4 className="text-2xl font-bold text-kadam-deep-green mb-6 text-center kadam-heading">
+          Choose Your Wizard
+        </h4>
+        <p className="text-gray-600 text-center mb-8 kadam-body">
+          Here are your top 3 recommended {recommendation.wizard_type}s based on your needs
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {wizards.map((wizard, index) => (
+            <motion.div
+              key={wizard.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden hover:border-kadam-gold hover:shadow-xl transition-all duration-300"
+            >
+              {index === 0 && (
+                <div className="bg-kadam-gold text-kadam-deep-green px-4 py-2 text-center font-semibold text-sm">
+                  ⭐ TOP RECOMMENDED
+                </div>
+              )}
+
+              <div className="p-6">
+                <div className="flex items-center space-x-4 mb-4">
+                  <img
+                    src={wizard.image}
+                    alt={wizard.name}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-kadam-gold shadow-md"
+                  />
+                  <div>
+                    <h4 className="font-bold text-lg text-gray-800">{wizard.name}</h4>
+                    <p className="text-gray-600 text-sm">{wizard.title}</p>
+                    <div className="flex items-center mt-1">
+                      <FaStar className="text-yellow-400 text-sm mr-1" />
+                      <span className="text-sm font-semibold text-gray-700">{wizard.rating}</span>
+                      <span className="text-sm text-gray-500 ml-1">({wizard.reviews})</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{wizard.bio}</p>
+
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <FaMapMarkerAlt className="mr-2 text-gray-400" />
+                    <span>{wizard.location}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <FaDollarSign className="mr-2 text-gray-400" />
+                    <span className="font-semibold text-gray-800">{wizard.price}</span>
+                    <span className="ml-2">• {wizard.experience}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-3 mb-4">
+                  <span className="text-sm text-gray-500">Available via:</span>
+                  {wizard.availability.map((method, idx) => (
+                    <div key={idx} className="flex items-center space-x-1">
+                      {getAvailabilityIcon(method)}
+                      <span className="text-xs text-gray-600">{method}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => onWizardSelect(wizard)}
+                  className="w-full bg-gradient-to-r from-kadam-deep-green to-kadam-medium-green hover:from-kadam-medium-green hover:to-kadam-deep-green text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Select This Wizard
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* AI Explanation */}
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow-soft border border-kadam-gold/20">
+        <h5 className="font-semibold text-kadam-deep-green mb-3 flex items-center">
+          <FaWandMagicSparkles className="mr-2" />
+          Why This Match?
+        </h5>
+        <p className="text-gray-700 kadam-body leading-relaxed">
+          {recommendation.personalized_explanation}
+        </p>
       </div>
     </div>
   );
 }
 
-// Step 3: Schedule & Payment (Combined)
+// Step 2: Schedule & Payment (Same as before)
 function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -581,7 +562,7 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
             className="kadam-button-outline inline-flex items-center disabled:opacity-50"
           >
             <FaArrowLeft className="mr-2" />
-            Back to Wizards
+            Back to Wizard Selection
           </button>
 
           <button
@@ -607,7 +588,7 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
   );
 }
 
-// Step 4: Transform (Success/Celebration)
+// Step 3: Transform (Same as before)
 function TransformStep({ wizard, bookingData, onClose }) {
   return (
     <div className="p-8 text-center">

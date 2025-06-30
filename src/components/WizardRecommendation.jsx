@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 const iconMap = {
   FaUserTie,
-  FaBrain, 
+  FaBrain,
   FaHeart,
   FaLightbulb
 };
@@ -150,39 +150,27 @@ function WizardRecommendation({ recommendation, onClose, userInput }) {
                 </div>
               </div>
 
-              {/* Right Column - 5-Step Process Preview */}
+              {/* Right Column - Journey Preview */}
               <div>
                 <h3 className="kadam-heading text-2xl mb-6 text-kadam-deep-green">Your Transformation Journey</h3>
                 <div className="space-y-4">
                   {[
                     {
                       step: 1,
-                      title: "Discover",
-                      description: "AI matches you with the perfect wizard type",
+                      title: "Discover & Choose",
+                      description: "AI matches you with perfect wizards to choose from",
                       icon: FaWandMagicSparkles,
                       completed: true
                     },
                     {
                       step: 2,
-                      title: "Connect",
-                      description: "Choose from top 3 recommended wizards",
-                      icon: FaStar
-                    },
-                    {
-                      step: 3,
-                      title: "Schedule",
-                      description: "Book your session at your convenience",
+                      title: "Schedule & Pay",
+                      description: "Book your session and complete secure payment",
                       icon: FaClock
                     },
                     {
-                      step: 4,
+                      step: 3,
                       title: "Transform",
-                      description: "Secure payment and confirmation",
-                      icon: FaArrowRight
-                    },
-                    {
-                      step: 5,
-                      title: "Grow",
                       description: "Begin your transformation journey",
                       icon: FaWandMagicSparkles
                     }
