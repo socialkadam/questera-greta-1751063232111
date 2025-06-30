@@ -23,7 +23,7 @@ supabase.from('profiles').select('count').limit(1)
 
 // Helper functions for auth and data operations
 export const authHelpers = {
-  // Sign up with role - Enhanced with debugging
+  // Sign up with role - Enhanced with debugging and auth state management
   async signUp(email, password, userData = {}) {
     try {
       console.log('🔄 Starting signup process for:', email)
@@ -53,11 +53,32 @@ export const authHelpers = {
 
       console.log('✅ Auth signup successful:', data.user.id)
 
-      // Step 2: Wait for trigger to create profile (or create manually)
-      console.log('⏳ Waiting for profile creation...')
+      // Step 2: Wait for auth state to be established
+      console.log('⏳ Waiting for auth state to be established...')
       await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds
 
-      // Step 3: Check if profile was created by trigger
+      // Step 3: Verify authentication by getting current user
+      const { data: currentUser, error: authError } = await supabase.auth.getUser()
+      
+      if (authError || !currentUser.user) {
+        console.log('⚠️ User not authenticated yet, trying manual session setup...')
+        
+        // Try setting the session manually if needed
+        if (data.session) {
+          await supabase.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token
+          })
+          
+          // Wait a bit more for session to be established
+          await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+      }
+
+      console.log('✅ User authentication verified')
+
+      // Step 4: Check if profile was created by trigger
+      console.log('🔍 Checking for profile creation...')
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -168,24 +189,35 @@ export const authHelpers = {
 
 // Wizard-specific operations
 export const wizardHelpers = {
-  // Create wizard profile with enhanced debugging
-  async createWizardProfile(wizardData) {
+  // Create wizard profile with enhanced debugging and auth handling
+  async createWizardProfile(wizardData, userId = null) {
     try {
       console.log('🔄 Creating wizard profile:', wizardData)
       
-      // First, ensure the user is authenticated
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        throw new Error('No authenticated user found')
+      let authenticatedUser = null
+
+      if (userId) {
+        // Use provided user ID (for cases where we just created the user)
+        console.log('👤 Using provided user ID:', userId)
+        authenticatedUser = { id: userId }
+      } else {
+        // Get current authenticated user
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+          console.error('❌ Auth check failed:', authError)
+          throw new Error('No authenticated user found. Please try logging in again.')
+        }
+        authenticatedUser = user
       }
 
-      console.log('👤 Authenticated user:', user.id)
+      console.log('👤 Working with user:', authenticatedUser.id)
 
-      // Check if profile exists
+      // Check if profile exists for this user
+      console.log('🔍 Checking if profile exists...')
       const { data: existingProfile, error: profileCheckError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', authenticatedUser.id)
         .single()
 
       if (profileCheckError && profileCheckError.code === 'PGRST116') {
@@ -194,9 +226,9 @@ export const wizardHelpers = {
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
-            id: user.id,
-            full_name: wizardData.full_name || user.user_metadata?.full_name || '',
-            email: user.email,
+            id: authenticatedUser.id,
+            full_name: wizardData.full_name || '',
+            email: wizardData.email || '',
             role: 'wizard'
           })
 
@@ -214,7 +246,7 @@ export const wizardHelpers = {
           const { error: updateError } = await supabase
             .from('profiles')
             .update({ role: 'wizard' })
-            .eq('id', user.id)
+            .eq('id', authenticatedUser.id)
 
           if (updateError) {
             console.error('❌ Profile role update error:', updateError)
@@ -228,7 +260,7 @@ export const wizardHelpers = {
       const { data, error } = await supabase
         .from('wizards')
         .insert({
-          id: user.id,
+          id: authenticatedUser.id,
           wizard_type: wizardData.wizard_type,
           specialization: wizardData.specialization,
           title: wizardData.title,

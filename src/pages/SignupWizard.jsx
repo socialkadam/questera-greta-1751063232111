@@ -200,10 +200,12 @@ function SignupWizard() {
 
       addDebugInfo('✅ User account created with ID: ' + authData.user.id)
 
-      // Step 2: Create wizard profile
-      addDebugInfo('🧙‍♂️ Creating wizard profile...')
+      // Step 2: Create wizard profile - Pass the user ID explicitly
+      addDebugInfo('🧙‍♂️ Creating wizard profile with user ID: ' + authData.user.id)
+      
       const wizardData = {
         full_name: formData.full_name,
+        email: formData.email, // Include email for profile creation
         wizard_type: formData.wizard_type,
         specialization: formData.specialization,
         title: formData.title,
@@ -218,7 +220,8 @@ function SignupWizard() {
         status: 'pending'
       }
 
-      const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(wizardData)
+      // Pass the user ID to ensure we use the right account
+      const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(wizardData, authData.user.id)
 
       if (wizardError) {
         addDebugInfo('❌ Wizard creation error: ' + wizardError.message)
@@ -257,6 +260,8 @@ function SignupWizard() {
         setError('Please enter a valid email address.')
       } else if (err.message?.includes('Password')) {
         setError('Password must be at least 6 characters long.')
+      } else if (err.message?.includes('No authenticated user found')) {
+        setError('Authentication issue. Please try again or contact support.')
       } else if (err.message?.includes('row-level security') || err.message?.includes('RLS')) {
         setError('Database security issue. Please contact support.')
       } else if (err.message?.includes('Database error')) {
