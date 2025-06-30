@@ -117,9 +117,9 @@ function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section with Title and Search - Dark Background */}
-      <div 
-        id="search-section" 
-        className="min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center px-4 sm:px-6" 
+      <div
+        id="search-section"
+        className="min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center px-4 sm:px-6"
         style={{ backgroundColor: '#013d39' }}
       >
         <div className="max-w-4xl w-full text-center">
@@ -153,6 +153,7 @@ function Home() {
                   className="flex-1 py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base lg:text-lg focus:outline-none bg-transparent rounded-full"
                   disabled={isLoading}
                 />
+
                 {/* Submit Button */}
                 <button
                   type="submit"
@@ -237,6 +238,7 @@ function Home() {
               <WizardRecommendation
                 recommendation={gptRecommendation}
                 onClose={closeGptResult}
+                userInput={searchInput}
               />
             </div>
           </div>
@@ -248,6 +250,7 @@ function Home() {
         <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-center mb-8 sm:mb-16">
           Choose Your Wizard Type
         </h2>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {wizardTypes.map((wizard) => (
             <motion.div

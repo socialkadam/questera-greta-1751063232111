@@ -5,7 +5,12 @@ import { FaWandMagicSparkles } from 'react-icons/fa6';
 import TransformationJourney from './TransformationJourney';
 import { useState } from 'react';
 
-const iconMap = { FaUserTie, FaBrain, FaHeart, FaLightbulb };
+const iconMap = {
+  FaUserTie,
+  FaBrain, 
+  FaHeart,
+  FaLightbulb
+};
 
 function WizardRecommendation({ recommendation, onClose, userInput }) {
   const [showJourney, setShowJourney] = useState(false);
@@ -40,10 +45,12 @@ function WizardRecommendation({ recommendation, onClose, userInput }) {
     .join(' ');
 
   const handleStartJourney = () => {
+    console.log("🚀 Starting Transformation Journey...");
     setShowJourney(true);
   };
 
   const handleCloseJourney = () => {
+    console.log("❌ Closing Transformation Journey...");
     setShowJourney(false);
   };
 
@@ -148,14 +155,47 @@ function WizardRecommendation({ recommendation, onClose, userInput }) {
                 <h3 className="kadam-heading text-2xl mb-6 text-kadam-deep-green">Your Transformation Journey</h3>
                 <div className="space-y-4">
                   {[
-                    { step: 1, title: "Discover", description: "AI matches you with the perfect wizard type", icon: FaWandMagicSparkles, completed: true },
-                    { step: 2, title: "Connect", description: "Choose from top 3 recommended wizards", icon: FaStar },
-                    { step: 3, title: "Schedule", description: "Book your session at your convenience", icon: FaClock },
-                    { step: 4, title: "Transform", description: "Secure payment and confirmation", icon: FaArrowRight },
-                    { step: 5, title: "Grow", description: "Begin your transformation journey", icon: FaWandMagicSparkles }
+                    {
+                      step: 1,
+                      title: "Discover",
+                      description: "AI matches you with the perfect wizard type",
+                      icon: FaWandMagicSparkles,
+                      completed: true
+                    },
+                    {
+                      step: 2,
+                      title: "Connect",
+                      description: "Choose from top 3 recommended wizards",
+                      icon: FaStar
+                    },
+                    {
+                      step: 3,
+                      title: "Schedule",
+                      description: "Book your session at your convenience",
+                      icon: FaClock
+                    },
+                    {
+                      step: 4,
+                      title: "Transform",
+                      description: "Secure payment and confirmation",
+                      icon: FaArrowRight
+                    },
+                    {
+                      step: 5,
+                      title: "Grow",
+                      description: "Begin your transformation journey",
+                      icon: FaWandMagicSparkles
+                    }
                   ].map((item) => (
-                    <div key={item.step} className={`flex items-start space-x-4 p-4 rounded-xl ${item.completed ? 'bg-kadam-gold/20' : 'bg-white'} shadow-soft`}>
-                      <div className={`rounded-full p-2 flex-shrink-0 ${item.completed ? 'bg-kadam-gold' : 'bg-gray-200'}`}>
+                    <div
+                      key={item.step}
+                      className={`flex items-start space-x-4 p-4 rounded-xl ${
+                        item.completed ? 'bg-kadam-gold/20' : 'bg-white'
+                      } shadow-soft`}
+                    >
+                      <div className={`rounded-full p-2 flex-shrink-0 ${
+                        item.completed ? 'bg-kadam-gold' : 'bg-gray-200'
+                      }`}>
                         {item.completed ? (
                           <FaWandMagicSparkles className="text-kadam-deep-green text-sm" />
                         ) : (
