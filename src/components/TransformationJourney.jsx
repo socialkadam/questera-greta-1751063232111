@@ -59,11 +59,30 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const steps = [
-    { id: 1, name: "Discover", description: "Find your perfect match", icon: FaWandMagicSparkles },
-    { id: 2, name: "Connect", description: "Choose your wizard", icon: FaStar },
-    { id: 3, name: "Schedule", description: "Book your session", icon: FaCalendarAlt },
-    { id: 4, name: "Transform", description: "Confirm & pay", icon: FaCreditCard },
-    { id: 5, name: "Grow", description: "Begin your journey", icon: FaGem }
+    {
+      id: 1,
+      name: "Discover",
+      description: "Find your perfect match",
+      icon: FaWandMagicSparkles
+    },
+    {
+      id: 2,
+      name: "Connect",
+      description: "Choose your wizard",
+      icon: FaStar
+    },
+    {
+      id: 3,
+      name: "Schedule",
+      description: "Book & pay for your session",
+      icon: FaCalendarAlt
+    },
+    {
+      id: 4,
+      name: "Transform",
+      description: "Celebration & confirmation",
+      icon: FaGem
+    }
   ];
 
   const nextStep = () => {
@@ -88,10 +107,6 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
     nextStep();
   };
 
-  const handlePaymentSuccess = () => {
-    nextStep();
-  };
-
   const getAvailabilityIcon = (method) => {
     switch (method) {
       case 'Video Call': return <FaVideo className="text-green-600" />;
@@ -110,9 +125,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
       case 3:
         return <ScheduleStep wizard={selectedWizard} onBookingConfirm={handleBookingConfirm} onBack={prevStep} />;
       case 4:
-        return <TransformStep wizard={selectedWizard} bookingData={bookingData} onPaymentSuccess={handlePaymentSuccess} onBack={prevStep} />;
-      case 5:
-        return <GrowStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
+        return <TransformStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
       default:
         return null;
     }
@@ -149,19 +162,19 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
                 const StepIcon = step.icon;
                 const isCompleted = currentStep > step.id;
                 const isCurrent = currentStep === step.id;
-                
+
                 return (
                   <div key={step.id} className="flex flex-col items-center relative">
                     {/* Connection Line */}
                     {index < steps.length - 1 && (
                       <div className="absolute top-6 left-12 w-full h-0.5 bg-white/30">
-                        <div 
+                        <div
                           className="h-full bg-kadam-gold transition-all duration-500"
                           style={{ width: isCompleted ? '100%' : '0%' }}
                         />
                       </div>
                     )}
-                    
+
                     {/* Step Circle */}
                     <motion.div
                       initial={false}
@@ -177,7 +190,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
                         <StepIcon className={`text-lg ${isCurrent ? 'text-kadam-deep-green' : 'text-white'}`} />
                       )}
                     </motion.div>
-                    
+
                     {/* Step Label */}
                     <div className="mt-3 text-center">
                       <div className={`font-semibold ${isCurrent || isCompleted ? 'text-kadam-gold' : 'text-white/70'}`}>
@@ -235,7 +248,7 @@ function DiscoverStep({ recommendation, userInput, onNext }) {
         <p className="text-gray-700 text-lg mb-6 kadam-body">
           {recommendation.personalized_explanation}
         </p>
-        
+
         <div className="flex items-center justify-center space-x-4 mb-8">
           <div className="flex items-center">
             <span className="text-kadam-deep-green font-semibold">Specialization:</span>
@@ -299,7 +312,7 @@ function ConnectStep({ wizards, onWizardSelect, onBack }) {
                 ⭐ TOP RECOMMENDED
               </div>
             )}
-            
+
             <div className="p-6">
               <div className="flex items-center space-x-4 mb-4">
                 <img
@@ -366,26 +379,34 @@ function ConnectStep({ wizards, onWizardSelect, onBack }) {
   );
 }
 
-// Step 3: Schedule
+// Step 3: Schedule & Payment (Combined)
 function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [sessionType, setSessionType] = useState('video');
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Mock available times
   const availableTimes = [
     '9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'
   ];
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     if (selectedDate && selectedTime) {
-      onBookingConfirm({
-        wizard: wizard,
-        date: selectedDate,
-        time: selectedTime,
-        sessionType: sessionType,
-        lapsulaBookingId: `booking_${wizard.lapsulaId}_${Date.now()}`
-      });
+      setIsProcessing(true);
+      
+      // Simulate payment processing
+      setTimeout(() => {
+        setIsProcessing(false);
+        onBookingConfirm({
+          wizard: wizard,
+          date: selectedDate,
+          time: selectedTime,
+          sessionType: sessionType,
+          lapsulaBookingId: `booking_${wizard.lapsulaId}_${Date.now()}`,
+          paymentConfirmed: true
+        });
+      }, 2000);
     }
   };
 
@@ -393,7 +414,7 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
     <div className="p-8">
       <div className="text-center mb-8">
         <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
-          Schedule Your Session
+          Schedule & Pay for Your Session
         </h3>
         <p className="text-gray-600 text-lg kadam-body">
           Book a session with {wizard.name}
@@ -402,7 +423,7 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
 
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Wizard Info */}
+          {/* Left: Wizard Info & Session Type */}
           <div className="bg-kadam-light-green rounded-2xl p-6">
             <div className="flex items-center space-x-4 mb-4">
               <img
@@ -416,7 +437,7 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
                 <p className="text-kadam-deep-green font-semibold">{wizard.price}</p>
               </div>
             </div>
-            
+
             {/* Session Type Selection */}
             <div className="mb-6">
               <h5 className="font-semibold text-kadam-deep-green mb-3">Session Type</h5>
@@ -436,57 +457,116 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Lapsula Calendar Integration Placeholder */}
-          <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
-            <h5 className="font-semibold text-kadam-deep-green mb-4">Select Date & Time</h5>
-            
-            {/* Mock Calendar */}
-            <div className="mb-6">
-              <div className="grid grid-cols-7 gap-2 mb-4">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                  <div key={day} className="text-center font-semibold text-gray-600 p-2">
-                    {day}
-                  </div>
-                ))}
-              </div>
-              
-              <div className="grid grid-cols-7 gap-2">
-                {Array.from({ length: 31 }, (_, i) => i + 1).map(date => (
-                  <button
-                    key={date}
-                    onClick={() => setSelectedDate(date)}
-                    className={`p-2 rounded-lg text-center transition-colors ${
-                      selectedDate === date
-                        ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
-                        : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    {date}
-                  </button>
-                ))}
+            {/* Booking Summary */}
+            <div className="bg-white rounded-xl p-4 mb-6">
+              <h5 className="font-semibold text-kadam-deep-green mb-3">Booking Summary</h5>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Session:</span>
+                  <span className="font-semibold">{wizard.price}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Platform fee:</span>
+                  <span>$5.00</span>
+                </div>
+                <div className="border-t pt-2 mt-2 flex justify-between font-bold">
+                  <span>Total:</span>
+                  <span>$155.00</span>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Available Times */}
-            {selectedDate && (
-              <div>
-                <h6 className="font-semibold text-kadam-deep-green mb-3">Available Times</h6>
-                <div className="grid grid-cols-2 gap-2">
-                  {availableTimes.map(time => (
+          {/* Right: Calendar & Payment */}
+          <div className="space-y-6">
+            {/* Calendar */}
+            <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
+              <h5 className="font-semibold text-kadam-deep-green mb-4">Select Date & Time</h5>
+              
+              {/* Mock Calendar */}
+              <div className="mb-6">
+                <div className="grid grid-cols-7 gap-2 mb-4">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="text-center font-semibold text-gray-600 p-2">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map(date => (
                     <button
-                      key={time}
-                      onClick={() => setSelectedTime(time)}
-                      className={`p-3 rounded-lg text-center transition-colors ${
-                        selectedTime === time
+                      key={date}
+                      onClick={() => setSelectedDate(date)}
+                      className={`p-2 rounded-lg text-center transition-colors ${
+                        selectedDate === date
                           ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
-                          : 'bg-gray-100 hover:bg-gray-200'
+                          : 'hover:bg-gray-100'
                       }`}
                     >
-                      {time}
+                      {date}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Available Times */}
+              {selectedDate && (
+                <div>
+                  <h6 className="font-semibold text-kadam-deep-green mb-3">Available Times</h6>
+                  <div className="grid grid-cols-2 gap-2">
+                    {availableTimes.map(time => (
+                      <button
+                        key={time}
+                        onClick={() => setSelectedTime(time)}
+                        className={`p-3 rounded-lg text-center transition-colors ${
+                          selectedTime === time
+                            ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
+                            : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Payment Form */}
+            {selectedDate && selectedTime && (
+              <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
+                <h5 className="font-semibold text-kadam-deep-green mb-4">Payment Information</h5>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-700 mb-2">Card Number</label>
+                    <input
+                      type="text"
+                      placeholder="**** **** **** 1234"
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      disabled={isProcessing}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-700 mb-2">Expiry</label>
+                      <input
+                        type="text"
+                        placeholder="MM/YY"
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                        disabled={isProcessing}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-2">CVV</label>
+                      <input
+                        type="text"
+                        placeholder="123"
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                        disabled={isProcessing}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -497,7 +577,8 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
         <div className="flex justify-between mt-8">
           <button
             onClick={onBack}
-            className="kadam-button-outline inline-flex items-center"
+            disabled={isProcessing}
+            className="kadam-button-outline inline-flex items-center disabled:opacity-50"
           >
             <FaArrowLeft className="mr-2" />
             Back to Wizards
@@ -505,124 +586,7 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
 
           <button
             onClick={handleConfirmBooking}
-            disabled={!selectedDate || !selectedTime}
-            className="kadam-button disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
-          >
-            Confirm Booking
-            <FaArrowRight className="ml-2" />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Step 4: Transform (Payment)
-function TransformStep({ wizard, bookingData, onPaymentSuccess, onBack }) {
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handlePayment = async () => {
-    setIsProcessing(true);
-    
-    // Simulate payment processing with Lapsula
-    setTimeout(() => {
-      setIsProcessing(false);
-      onPaymentSuccess();
-    }, 2000);
-  };
-
-  return (
-    <div className="p-8">
-      <div className="text-center mb-8">
-        <h3 className="text-3xl font-bold text-kadam-deep-green mb-4 kadam-heading">
-          Confirm & Pay
-        </h3>
-        <p className="text-gray-600 text-lg kadam-body">
-          Secure your transformation session
-        </p>
-      </div>
-
-      <div className="max-w-2xl mx-auto">
-        {/* Booking Summary */}
-        <div className="bg-kadam-light-green rounded-2xl p-6 mb-8">
-          <h4 className="font-semibold text-kadam-deep-green mb-4">Booking Summary</h4>
-          
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span>Wizard:</span>
-              <span className="font-semibold">{wizard.name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Date:</span>
-              <span className="font-semibold">Dec {bookingData.date}, 2024</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Time:</span>
-              <span className="font-semibold">{bookingData.time}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Session Type:</span>
-              <span className="font-semibold capitalize">{bookingData.sessionType}</span>
-            </div>
-            <div className="flex justify-between border-t pt-3 mt-3">
-              <span className="font-semibold">Total:</span>
-              <span className="font-bold text-lg">{wizard.price}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Payment Form Placeholder */}
-        <div className="bg-white rounded-2xl p-6 border-2 border-gray-200 mb-8">
-          <h4 className="font-semibold text-kadam-deep-green mb-4">Payment Information</h4>
-          
-          {/* This would integrate with Lapsula's payment system */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-gray-700 mb-2">Card Number</label>
-              <input
-                type="text"
-                placeholder="**** **** **** 1234"
-                className="w-full p-3 border border-gray-300 rounded-lg"
-                disabled={isProcessing}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-700 mb-2">Expiry</label>
-                <input
-                  type="text"
-                  placeholder="MM/YY"
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                  disabled={isProcessing}
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">CVV</label>
-                <input
-                  type="text"
-                  placeholder="123"
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                  disabled={isProcessing}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <div className="flex justify-between">
-          <button
-            onClick={onBack}
-            disabled={isProcessing}
-            className="kadam-button-outline inline-flex items-center disabled:opacity-50"
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Schedule
-          </button>
-
-          <button
-            onClick={handlePayment}
-            disabled={isProcessing}
+            disabled={!selectedDate || !selectedTime || isProcessing}
             className="kadam-button disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
           >
             {isProcessing ? (
@@ -633,7 +597,7 @@ function TransformStep({ wizard, bookingData, onPaymentSuccess, onBack }) {
             ) : (
               <>
                 <FaCreditCard className="mr-2" />
-                Confirm Payment
+                Confirm & Pay
               </>
             )}
           </button>
@@ -643,8 +607,8 @@ function TransformStep({ wizard, bookingData, onPaymentSuccess, onBack }) {
   );
 }
 
-// Step 5: Grow (Success)
-function GrowStep({ wizard, bookingData, onClose }) {
+// Step 4: Transform (Success/Celebration)
+function TransformStep({ wizard, bookingData, onClose }) {
   return (
     <div className="p-8 text-center">
       <motion.div
@@ -669,8 +633,7 @@ function GrowStep({ wizard, bookingData, onClose }) {
 
           <div className="bg-gradient-to-br from-kadam-light-green to-white rounded-2xl p-8 mb-8">
             <p className="text-xl text-gray-700 mb-6 kadam-body leading-relaxed">
-              You've taken the most important step in your transformation journey - 
-              <strong className="text-kadam-deep-green"> you chose to act!</strong>
+              You've taken the most important step in your transformation journey - <strong className="text-kadam-deep-green">you chose to act!</strong>
             </p>
 
             <div className="bg-white rounded-xl p-6 mb-6 border-2 border-kadam-gold">
@@ -685,18 +648,13 @@ function GrowStep({ wizard, bookingData, onClose }) {
 
             <div className="text-lg text-gray-700 kadam-body space-y-4">
               <p>
-                🌟 You've joined thousands of seekers who chose growth over comfort, 
-                action over hesitation, and transformation over status quo.
+                🌟 You've joined thousands of seekers who chose growth over comfort, action over hesitation, and transformation over status quo.
               </p>
-              
               <p>
-                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, 
-                and personalized strategies designed specifically for your journey.
+                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, and personalized strategies designed specifically for your journey.
               </p>
-              
               <p className="bg-kadam-gold/20 p-4 rounded-xl">
-                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. 
-                Your journey to unlocking your full human potential starts now!
+                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. Your journey to unlocking your full human potential starts now!
               </p>
             </div>
           </div>
@@ -705,7 +663,6 @@ function GrowStep({ wizard, bookingData, onClose }) {
             <p className="text-gray-600 kadam-body">
               Check your email for session details and preparation materials.
             </p>
-            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => window.location.href = '/dashboard'}
@@ -714,7 +671,6 @@ function GrowStep({ wizard, bookingData, onClose }) {
                 <FaWandMagicSparkles className="mr-2" />
                 Go to Dashboard
               </button>
-              
               <button
                 onClick={onClose}
                 className="kadam-button-outline"
