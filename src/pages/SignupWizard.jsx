@@ -88,7 +88,7 @@ function SignupWizard() {
     setFormData(prev => ({
       ...prev,
       [field]: checked 
-        ? [...prev[field], value]
+        ? [...prev[field], value] 
         : prev[field].filter(item => item !== value)
     }))
   }
@@ -176,10 +176,11 @@ function SignupWizard() {
     setDebugInfo([])
 
     try {
-      addDebugInfo('🚀 Starting wizard signup process...')
+      addDebugInfo('🚀 Starting SIMPLIFIED wizard signup process...')
 
-      // Step 1: Create user account
+      // Step 1: Create user account with SIMPLE approach
       addDebugInfo('📧 Creating user account with email: ' + formData.email)
+      
       const { data: authData, error: authError } = await authHelpers.signUp(
         formData.email,
         formData.password,
@@ -198,18 +199,12 @@ function SignupWizard() {
         throw new Error('Failed to create user account - no user returned')
       }
 
-      addDebugInfo('✅ User account and profile created with ID: ' + authData.user.id)
+      addDebugInfo('✅ User account created successfully with ID: ' + authData.user.id)
 
-      // Step 2: Wait a moment to ensure everything is committed
-      addDebugInfo('⏳ Ensuring user is fully authenticated...')
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      // Step 3: Create wizard profile - Pass the user ID explicitly
-      addDebugInfo('🧙‍♂️ Creating wizard profile with user ID: ' + authData.user.id)
+      // Step 2: Create wizard profile
+      addDebugInfo('🧙‍♂️ Creating wizard profile...')
       
       const wizardData = {
-        full_name: formData.full_name,
-        email: formData.email,
         wizard_type: formData.wizard_type,
         specialization: formData.specialization,
         title: formData.title,
@@ -220,12 +215,13 @@ function SignupWizard() {
         certifications: formData.certifications ? formData.certifications.split(',').map(c => c.trim()) : [],
         education: formData.education || null,
         languages: formData.languages.split(',').map(l => l.trim()),
-        session_types: formData.session_types,
-        status: 'pending'
+        session_types: formData.session_types
       }
 
-      // Pass the user ID to ensure we use the right account
-      const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(wizardData, authData.user.id)
+      const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(
+        wizardData, 
+        authData.user.id
+      )
 
       if (wizardError) {
         addDebugInfo('❌ Wizard creation error: ' + wizardError.message)
@@ -256,7 +252,7 @@ function SignupWizard() {
     } catch (err) {
       addDebugInfo('❌ Signup failed: ' + err.message)
       console.error('❌ Wizard signup failed:', err)
-      
+
       // Handle specific errors with more detail
       if (err.message?.includes('already registered') || err.message?.includes('already been registered')) {
         setError('An account with this email already exists. Please sign in instead.')
@@ -264,20 +260,6 @@ function SignupWizard() {
         setError('Please enter a valid email address.')
       } else if (err.message?.includes('Password')) {
         setError('Password must be at least 6 characters long.')
-      } else if (err.message?.includes('Authentication system error')) {
-        setError('Authentication system is busy. Please wait a moment and try again.')
-      } else if (err.message?.includes('Authentication mismatch')) {
-        setError('Authentication issue. Please refresh the page and try again.')
-      } else if (err.message?.includes('foreign key constraint')) {
-        setError('System synchronization issue. Please try again in a moment.')
-      } else if (err.message?.includes('User profile not found')) {
-        setError('Profile creation issue. Please contact support.')
-      } else if (err.message?.includes('Database error')) {
-        setError('Database connection issue. Please try again.')
-      } else if (err.message?.includes('Failed to create user profile')) {
-        setError('Profile creation failed. Please try again or contact support.')
-      } else if (err.message?.includes('Failed to create wizard profile')) {
-        setError('Wizard profile creation failed. Please try again.')
       } else {
         setError('Something went wrong: ' + err.message)
       }
@@ -303,6 +285,7 @@ function SignupWizard() {
                 className="h-12 w-auto mx-auto mb-6"
               />
             </div>
+            
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -311,6 +294,7 @@ function SignupWizard() {
             >
               <FaWandMagicSparkles className="text-4xl text-kadam-deep-green" />
             </motion.div>
+
             <h2 className="kadam-heading text-3xl mb-4 text-kadam-deep-green">
               Application Submitted!
             </h2>
@@ -725,19 +709,13 @@ function SignupWizard() {
             <div className="mt-12 text-center">
               <p className="text-gray-600 kadam-body">
                 Already have an account?{' '}
-                <Link
-                  to="/login"
-                  className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green"
-                >
+                <Link to="/login" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
                   Sign in here
                 </Link>
               </p>
               <p className="text-gray-600 mt-2 kadam-body">
                 Want to be a seeker instead?{' '}
-                <Link
-                  to="/signup"
-                  className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green"
-                >
+                <Link to="/signup" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
                   Sign up as seeker
                 </Link>
               </p>
@@ -745,6 +723,7 @@ function SignupWizard() {
           </div>
         </motion.div>
       </div>
+
       <ScrollToTop />
     </div>
   )

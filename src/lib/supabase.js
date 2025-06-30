@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import {createClient} from '@supabase/supabase-js'
 
 // Supabase project credentials - using verified working credentials
 const SUPABASE_URL = 'https://fuhzrjphwzbvbgiuoknt.supabase.co'
@@ -23,12 +23,12 @@ supabase.from('profiles').select('count').limit(1)
 
 // Helper functions for auth and data operations
 export const authHelpers = {
-  // Sign up with role - Enhanced with better error handling and timing
+  // SIMPLE & RELIABLE SIGNUP - Option 1 Enhanced
   async signUp(email, password, userData = {}) {
     try {
       console.log('🔄 Starting signup process for:', email)
       console.log('📝 User data:', userData)
-      
+
       // Step 1: Create user in Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -53,32 +53,22 @@ export const authHelpers = {
 
       console.log('✅ Auth signup successful:', data.user.id)
 
-      // Step 2: Wait longer for auth user to be fully created
+      // Step 2: CRITICAL - Wait for auth user to be committed
       console.log('⏳ Waiting for auth user to be fully committed...')
-      await new Promise(resolve => setTimeout(resolve, 3000)) // Wait 3 seconds
+      await new Promise(resolve => setTimeout(resolve, 2000)) // 2 second delay
 
-      // Step 3: Verify auth user exists before creating profile
-      console.log('🔍 Verifying auth user exists...')
-      const { data: authUser, error: authCheckError } = await supabase.auth.getUser()
+      // Step 3: The trigger should have created the profile automatically
+      // Let's verify it exists
+      console.log('🔍 Checking if profile was auto-created by trigger...')
       
-      if (authCheckError) {
-        console.error('❌ Auth user check error:', authCheckError)
-        throw new Error('Failed to verify user creation')
-      }
-
-      if (!authUser.user || authUser.user.id !== data.user.id) {
-        console.error('❌ Auth user mismatch or not found')
-        throw new Error('User verification failed')
-      }
-
-      console.log('✅ Auth user verified:', authUser.user.id)
-
-      // Step 4: Check if profile was auto-created by trigger
-      console.log('🔍 Checking for auto-created profile...')
       let profileExists = false
-      let retries = 3
-      
-      while (retries > 0 && !profileExists) {
+      let attempts = 0
+      const maxAttempts = 5
+
+      while (!profileExists && attempts < maxAttempts) {
+        attempts++
+        console.log(`🔍 Profile check attempt ${attempts}/${maxAttempts}...`)
+        
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('*')
@@ -86,7 +76,7 @@ export const authHelpers = {
           .single()
 
         if (profile) {
-          console.log('✅ Profile exists (created by trigger):', profile)
+          console.log('✅ Profile found (created by trigger):', profile)
           profileExists = true
           break
         }
@@ -96,16 +86,14 @@ export const authHelpers = {
           throw new Error(`Database error checking profile: ${profileError.message}`)
         }
 
-        console.log(`⏳ Profile not found, retrying... (${retries} attempts left)`)
+        console.log(`⏳ Profile not found, waiting 1 second before retry...`)
         await new Promise(resolve => setTimeout(resolve, 1000))
-        retries--
       }
 
-      // Step 5: If profile still doesn't exist, create it manually
+      // Step 4: If profile still doesn't exist, create it manually
       if (!profileExists) {
         console.log('📝 Creating profile manually...')
         
-        // Double-check that we can insert into profiles table
         const { data: newProfile, error: insertError } = await supabase
           .from('profiles')
           .insert({
@@ -119,19 +107,14 @@ export const authHelpers = {
 
         if (insertError) {
           console.error('❌ Manual profile creation error:', insertError)
-          
-          // If it's a foreign key constraint, the auth user might not be properly created
-          if (insertError.message.includes('foreign key constraint')) {
-            throw new Error('Authentication system error. Please try again in a few moments.')
-          }
-          
           throw new Error(`Failed to create user profile: ${insertError.message}`)
         }
-        
+
         console.log('✅ Profile created manually:', newProfile)
       }
 
       return { data, error: null }
+
     } catch (error) {
       console.error('❌ Signup exception:', error)
       return { data: null, error }
@@ -155,6 +138,7 @@ export const authHelpers = {
 
       console.log('✅ Signin successful:', data.user?.id)
       return { data, error: null }
+
     } catch (error) {
       console.error('❌ Signin exception:', error)
       return { data: null, error }
@@ -209,26 +193,17 @@ export const authHelpers = {
 
 // Wizard-specific operations
 export const wizardHelpers = {
-  // Create wizard profile with enhanced debugging and auth handling
+  // SIMPLIFIED CREATE WIZARD PROFILE
   async createWizardProfile(wizardData, userId = null) {
     try {
       console.log('🔄 Creating wizard profile:', wizardData)
-      
+
       let authenticatedUser = null
 
       if (userId) {
-        // Use provided user ID (for cases where we just created the user)
+        // Use provided user ID
         console.log('👤 Using provided user ID:', userId)
         authenticatedUser = { id: userId }
-        
-        // Verify this user ID exists in auth.users
-        console.log('🔍 Verifying provided user ID exists in auth...')
-        const { data: authUser, error: authError } = await supabase.auth.getUser()
-        
-        if (authError || !authUser.user || authUser.user.id !== userId) {
-          console.error('❌ Provided user ID does not match current auth user')
-          throw new Error('Authentication mismatch. Please try signing in again.')
-        }
       } else {
         // Get current authenticated user
         const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -241,7 +216,7 @@ export const wizardHelpers = {
 
       console.log('👤 Working with user:', authenticatedUser.id)
 
-      // Verify profile exists and user is authenticated
+      // Step 1: Verify profile exists
       console.log('🔍 Verifying profile exists...')
       const { data: existingProfile, error: profileCheckError } = await supabase
         .from('profiles')
@@ -260,7 +235,7 @@ export const wizardHelpers = {
 
       console.log('✅ Profile exists:', existingProfile.id)
 
-      // Update profile role if needed
+      // Step 2: Update profile role if needed
       if (existingProfile.role !== 'wizard') {
         console.log('📝 Updating profile role to wizard...')
         const { error: updateError } = await supabase
@@ -275,7 +250,7 @@ export const wizardHelpers = {
         console.log('✅ Profile role updated to wizard')
       }
 
-      // Now create the wizard profile
+      // Step 3: Create the wizard profile
       console.log('🧙‍♂️ Creating wizard entry...')
       const { data, error } = await supabase
         .from('wizards')
@@ -304,6 +279,7 @@ export const wizardHelpers = {
 
       console.log('✅ Wizard profile created successfully:', data)
       return { data, error: null }
+
     } catch (error) {
       console.error('❌ Wizard profile creation exception:', error)
       return { data: null, error }

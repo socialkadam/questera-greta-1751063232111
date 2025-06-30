@@ -76,10 +76,11 @@ function Signup() {
     setDebugInfo([])
 
     try {
-      addDebugInfo('🚀 Starting seeker signup process...')
+      addDebugInfo('🚀 Starting SIMPLE seeker signup process...')
 
-      // Sign up the user
+      // Sign up the user with SIMPLE approach
       addDebugInfo('📧 Creating user account with email: ' + formData.email)
+      
       const { data, error: signupError } = await authHelpers.signUp(
         formData.email,
         formData.password,
@@ -124,7 +125,7 @@ function Signup() {
     } catch (err) {
       addDebugInfo('❌ Signup failed: ' + err.message)
       console.error('❌ Signup failed:', err)
-      
+
       // Handle specific Supabase errors
       if (err.message?.includes('already registered')) {
         setError('An account with this email already exists. Please sign in instead.')
@@ -158,6 +159,7 @@ function Signup() {
             >
               <FaCheckCircle className="text-4xl text-green-600" />
             </motion.div>
+
             <h2 className="kadam-heading text-3xl mb-4 text-kadam-deep-green">
               Welcome to Wizardoo!
             </h2>
@@ -352,10 +354,7 @@ function Signup() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 kadam-body">
               Already have an account?{' '}
-              <Link
-                to="/login"
-                className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green"
-              >
+              <Link to="/login" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
                 Sign in here
               </Link>
             </p>
@@ -381,6 +380,7 @@ function Signup() {
           </div>
         </div>
       </motion.div>
+
       <ScrollToTop />
     </div>
   )
