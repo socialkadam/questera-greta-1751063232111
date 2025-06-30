@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
 import SeekerQuiz from '../components/SeekerQuiz';
 import ScrollToTop from '../components/ScrollToTop';
 
@@ -19,19 +18,12 @@ function SeekerOnboarding() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('seeker_profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (data) {
+      // Check localStorage for existing quiz result
+      const savedResult = localStorage.getItem(`seeker_profile_${user.id}`);
+      if (savedResult) {
+        const parsed = JSON.parse(savedResult);
         setHasExistingProfile(true);
-        setExistingResult({
-          recommendedArchetype: data.recommended_archetype,
-          scores: {}, // Could parse from quiz_answers if needed
-          totalScore: data.quiz_score
-        });
+        setExistingResult(parsed);
       }
     } catch (error) {
       console.error('Error checking existing profile:', error);
@@ -41,11 +33,14 @@ function SeekerOnboarding() {
   };
 
   const handleQuizComplete = (result) => {
+    // Save to localStorage
+    localStorage.setItem(`seeker_profile_${user.id}`, JSON.stringify(result));
     setHasExistingProfile(true);
     setExistingResult(result);
   };
 
   const handleRetakeQuiz = () => {
+    localStorage.removeItem(`seeker_profile_${user.id}`);
     setHasExistingProfile(false);
     setExistingResult(null);
   };

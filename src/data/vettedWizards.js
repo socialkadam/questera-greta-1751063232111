@@ -16,9 +16,9 @@ export const vettedWizards = [
     bio: "Specialized in helping professionals overcome procrastination and workplace burnout.",
     availability: ["Video Call", "Phone", "Chat"],
     keywords: [
-      "procrastination", "burnout", "workplace", "career", "productivity", 
-      "performance", "goals", "motivation", "professional", "work", "job",
-      "advancement", "leadership", "management", "corporate", "stress"
+      "procrastination", "burnout", "workplace", "career", "productivity", "performance", 
+      "goals", "motivation", "professional", "work", "job", "advancement", "leadership", 
+      "management", "corporate", "stress"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/sarah-johnson-coach/embed-020617-facc15"
   },
@@ -37,9 +37,9 @@ export const vettedWizards = [
     bio: "Expert in sustainable fitness transformations and healthy lifestyle design.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "fitness", "weight loss", "exercise", "workout", "nutrition", "health",
-      "diet", "gym", "training", "muscle", "cardio", "strength", "wellness",
-      "lifestyle", "habits", "energy", "body", "transform", "lose weight"
+      "fitness", "weight loss", "exercise", "workout", "nutrition", "health", "diet", 
+      "gym", "training", "muscle", "cardio", "strength", "wellness", "lifestyle", 
+      "habits", "energy", "body", "transform", "lose weight"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/marcus-chen-fitness/embed-020617-facc15"
   },
@@ -58,8 +58,8 @@ export const vettedWizards = [
     bio: "Helps busy professionals create efficient systems and overcome procrastination.",
     availability: ["Video Call", "Chat"],
     keywords: [
-      "productivity", "time management", "efficiency", "organization", "systems",
-      "focus", "concentration", "distraction", "procrastination", "planning",
+      "productivity", "time management", "efficiency", "organization", "systems", 
+      "focus", "concentration", "distraction", "procrastination", "planning", 
       "scheduling", "priorities", "workflow", "habits", "routine", "discipline"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/emma-rodriguez-productivity/embed-020617-facc15"
@@ -79,11 +79,35 @@ export const vettedWizards = [
     bio: "Helps individuals find their purpose and create meaningful life changes.",
     availability: ["Video Call", "Phone", "Chat"],
     keywords: [
-      "life purpose", "meaning", "direction", "goals", "dreams", "vision",
-      "personal growth", "self-improvement", "motivation", "inspiration",
+      "life purpose", "meaning", "direction", "goals", "dreams", "vision", 
+      "personal growth", "self-improvement", "motivation", "inspiration", 
       "confidence", "self-esteem", "happiness", "fulfillment", "balance"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/david-park-life/embed-020617-facc15"
+  },
+  // NEW WIZARD: Ashok Kadam
+  {
+    id: 'coach_005',
+    name: "Ashok Kadam",
+    wizard_type: "coach",
+    specialization: "leadership",
+    title: "Leadership Coach",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
+    rating: 4.9,
+    reviews: 85,
+    experience: "12 years",
+    location: "Mumbai, India",
+    price: "$180/session",
+    bio: "Experienced leadership coach specializing in executive development and team transformation. Helps leaders unlock their potential and drive organizational success.",
+    availability: ["Video Call", "Phone"],
+    keywords: [
+      "leadership", "executive coaching", "team development", "management", 
+      "organizational development", "leadership skills", "executive presence", 
+      "team building", "strategic thinking", "decision making", "influence", 
+      "communication", "authority", "vision", "culture", "transformation",
+      "emotional intelligence", "performance", "results", "growth"
+    ],
+    lapsulaBookingUrl: "https://app.lapsula.com/book/wizard-service-a68j6ypvtt4aitps0sgf16c7"
   },
 
   // CONSULTANTS
@@ -102,8 +126,8 @@ export const vettedWizards = [
     bio: "Former McKinsey consultant specializing in startup growth and business optimization.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "business strategy", "startup", "growth", "scaling", "revenue", "profit",
-      "market analysis", "competition", "business plan", "venture capital",
+      "business strategy", "startup", "growth", "scaling", "revenue", "profit", 
+      "market analysis", "competition", "business plan", "venture capital", 
       "funding", "investment", "entrepreneurship", "company", "operations"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/lisa-thompson-business/embed-020617-facc15"
@@ -123,8 +147,8 @@ export const vettedWizards = [
     bio: "Growth marketing expert who has scaled companies from startup to IPO.",
     availability: ["Video Call", "Chat"],
     keywords: [
-      "marketing", "digital marketing", "growth hacking", "social media",
-      "advertising", "campaigns", "brand", "content", "SEO", "analytics",
+      "marketing", "digital marketing", "growth hacking", "social media", 
+      "advertising", "campaigns", "brand", "content", "SEO", "analytics", 
       "conversion", "leads", "sales", "customers", "acquisition", "retention"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/robert-kim-marketing/embed-020617-facc15"
@@ -144,9 +168,9 @@ export const vettedWizards = [
     bio: "Expert in financial planning, investment strategies, and wealth management.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "finance", "money", "investment", "financial planning", "wealth",
-      "budget", "saving", "debt", "retirement", "portfolio", "stocks",
-      "bonds", "real estate", "financial freedom", "passive income"
+      "finance", "money", "investment", "financial planning", "wealth", "budget", 
+      "saving", "debt", "retirement", "portfolio", "stocks", "bonds", "real estate", 
+      "financial freedom", "passive income"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/jennifer-walsh-finance/embed-020617-facc15"
   },
@@ -167,8 +191,8 @@ export const vettedWizards = [
     bio: "Specialized in helping couples build stronger, more connected relationships.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "relationship", "marriage", "couple", "love", "communication", "conflict",
-      "intimacy", "trust", "commitment", "dating", "romance", "partnership",
+      "relationship", "marriage", "couple", "love", "communication", "conflict", 
+      "intimacy", "trust", "commitment", "dating", "romance", "partnership", 
       "family", "divorce", "separation", "therapy", "counseling", "emotional"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/maria-gonzalez-relationships/embed-020617-facc15"
@@ -188,8 +212,8 @@ export const vettedWizards = [
     bio: "Expert in treating anxiety disorders, panic attacks, and stress-related conditions.",
     availability: ["Video Call", "Phone", "Chat"],
     keywords: [
-      "anxiety", "stress", "panic", "worry", "fear", "overwhelmed", "nervous",
-      "mental health", "therapy", "depression", "mood", "emotional", "psychology",
+      "anxiety", "stress", "panic", "worry", "fear", "overwhelmed", "nervous", 
+      "mental health", "therapy", "depression", "mood", "emotional", "psychology", 
       "mindfulness", "meditation", "relaxation", "coping", "healing"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/book/wizard-service-grnsw3nz2z0uv3kkckf0cp3p"
@@ -209,8 +233,8 @@ export const vettedWizards = [
     bio: "Specialized in evidence-based treatments for trauma recovery and PTSD.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "trauma", "PTSD", "abuse", "recovery", "healing", "therapy", "counseling",
-      "grief", "loss", "emotional", "mental health", "support", "treatment",
+      "trauma", "PTSD", "abuse", "recovery", "healing", "therapy", "counseling", 
+      "grief", "loss", "emotional", "mental health", "support", "treatment", 
       "psychological", "therapeutic", "rehabilitation", "wellness"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/amanda-foster-trauma/embed-020617-facc15"
@@ -232,8 +256,8 @@ export const vettedWizards = [
     bio: "Founded and sold 2 companies, now mentoring the next generation of entrepreneurs.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "entrepreneurship", "startup", "business", "founder", "CEO", "venture",
-      "innovation", "technology", "silicon valley", "investment", "funding",
+      "entrepreneurship", "startup", "business", "founder", "CEO", "venture", 
+      "innovation", "technology", "silicon valley", "investment", "funding", 
       "scaling", "growth", "leadership", "vision", "strategy", "mentorship"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/michael-chang-entrepreneurship/embed-020617-facc15"
@@ -253,8 +277,8 @@ export const vettedWizards = [
     bio: "Former Fortune 500 CEO mentoring high-potential leaders.",
     availability: ["Video Call", "Phone"],
     keywords: [
-      "leadership", "management", "executive", "CEO", "director", "team",
-      "corporate", "strategy", "decision making", "influence", "authority",
+      "leadership", "management", "executive", "CEO", "director", "team", 
+      "corporate", "strategy", "decision making", "influence", "authority", 
       "development", "career", "advancement", "promotion", "success"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/jennifer-park-leadership/embed-020617-facc15"
@@ -274,8 +298,8 @@ export const vettedWizards = [
     bio: "Helps individuals discover their purpose and create meaningful life transformations.",
     availability: ["Video Call", "Phone", "Chat"],
     keywords: [
-      "personal growth", "self development", "purpose", "meaning", "spirituality",
-      "mindfulness", "consciousness", "wisdom", "enlightenment", "transformation",
+      "personal growth", "self development", "purpose", "meaning", "spirituality", 
+      "mindfulness", "consciousness", "wisdom", "enlightenment", "transformation", 
       "journey", "path", "discovery", "authentic", "fulfillment", "potential"
     ],
     lapsulaBookingUrl: "https://app.lapsula.com/shop/thomas-anderson-growth/embed-020617-facc15"
@@ -323,7 +347,7 @@ export class WizardMatchingEngine {
           this.nameIndex.get(cleanName).push(wizard);
         }
       });
-
+      
       // Also index full name
       const fullName = wizard.name.toLowerCase().replace(/[^\w\s]/g, '');
       this.nameIndex.set(fullName, [wizard]);
@@ -336,16 +360,16 @@ export class WizardMatchingEngine {
     
     // Check for name patterns
     const namePatterns = [
-      /^dr\.?\s+\w+/i,           // "Dr. James", "Dr James"
-      /^\w+\s+\w+$/,             // "James Wilson" (two words)
+      /^dr\.?\s+\w+/i, // "Dr. James", "Dr James"
+      /^\w+\s+\w+$/, // "James Wilson" (two words)
       /^(find|search|show)\s+(dr\.?\s*)?\w+/i, // "find Dr James", "search Wilson"
     ];
-
+    
     // Check if it matches name patterns
     if (namePatterns.some(pattern => pattern.test(input))) {
       return true;
     }
-
+    
     // Check if any word in input matches known names
     const words = input.replace(/[^\w\s]/g, '').split(/\s+/);
     return words.some(word => 
@@ -362,7 +386,7 @@ export class WizardMatchingEngine {
     
     const nameMatches = [];
     const seenWizards = new Set();
-
+    
     words.forEach(word => {
       if (this.nameIndex.has(word)) {
         this.nameIndex.get(word).forEach(wizard => {
@@ -379,10 +403,12 @@ export class WizardMatchingEngine {
             }
             
             // Partial match gets medium score
-            if (wizardNameWords.some(nameWord => nameWord.includes(word) || word.includes(nameWord))) {
+            if (wizardNameWords.some(nameWord => 
+              nameWord.includes(word) || word.includes(nameWord)
+            )) {
               nameScore += 30;
             }
-
+            
             nameMatches.push({
               ...wizard,
               matchScore: nameScore,
@@ -394,7 +420,7 @@ export class WizardMatchingEngine {
         });
       }
     });
-
+    
     // Sort by name match score
     return nameMatches.sort((a, b) => b.matchScore - a.matchScore);
   }
@@ -402,15 +428,18 @@ export class WizardMatchingEngine {
   // Extract keywords from user input
   extractKeywords(userInput) {
     const stopWords = new Set([
-      'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours',
-      'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers',
-      'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
-      'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
-      'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does',
-      'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
-      'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into',
-      'through', 'during', 'before', 'after', 'above', 'below', 'up', 'down', 'in', 'out',
-      'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'to', 'from',
+      'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves',
+      'you', 'your', 'yours', 'yourself', 'yourselves',
+      'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself',
+      'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
+      'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those',
+      'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+      'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing',
+      'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while',
+      'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into',
+      'through', 'during', 'before', 'after', 'above', 'below', 'up', 'down',
+      'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further',
+      'then', 'once', 'to', 'from',
       'find', 'search', 'show', 'get', 'want', 'need', 'looking', 'help'
     ]);
 
@@ -499,12 +528,12 @@ export class WizardMatchingEngine {
   // MAIN SEARCH METHOD - Enhanced with name-first logic
   findTopMatches(userInput, limit = 3) {
     console.log("🔍 Starting enhanced wizard search for:", userInput);
-    
+
     // STEP 1: Check if this is a name search
     if (this.isNameSearch(userInput)) {
       console.log("👤 Detected name search, prioritizing name matches");
-      
       const nameMatches = this.searchByName(userInput);
+      
       if (nameMatches.length > 0) {
         console.log("✅ Found name matches:", nameMatches.map(w => w.name));
         return nameMatches.slice(0, limit);
@@ -513,7 +542,6 @@ export class WizardMatchingEngine {
 
     // STEP 2: Fall back to keyword matching
     console.log("🔤 Performing keyword-based search");
-    
     const extractedKeywords = this.extractKeywords(userInput);
     console.log("📝 Extracted keywords:", extractedKeywords);
 
@@ -587,7 +615,7 @@ export class WizardMatchingEngine {
     if (matchedKeywords.length === 0) {
       return `Highly rated ${wizard.wizard_type} specialist`;
     }
-
+    
     const keywordText = matchedKeywords.slice(0, 3).join(', ');
     return `Perfect match for: ${keywordText}`;
   }
@@ -601,7 +629,12 @@ export class WizardMatchingEngine {
       mentor: ['guidance', 'wisdom', 'career', 'leadership', 'development', 'experience', 'advice', 'direction']
     };
 
-    let typeScores = { coach: 0, consultant: 0, counselor: 0, mentor: 0 };
+    let typeScores = {
+      coach: 0,
+      consultant: 0,
+      counselor: 0,
+      mentor: 0
+    };
 
     keywords.forEach(keyword => {
       Object.entries(typeKeywords).forEach(([type, typeWords]) => {

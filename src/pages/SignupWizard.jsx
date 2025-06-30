@@ -3,15 +3,34 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaUser, FaLock, FaEnvelope, FaArrowRight, FaArrowLeft, FaCheckCircle } from 'react-icons/fa'
 import { FaWandMagicSparkles } from 'react-icons/fa6'
-import { authHelpers, wizardHelpers, supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import ScrollToTop from '../components/ScrollToTop'
 
 const WIZARD_TYPES = [
-  { value: 'coach', label: 'Coach', description: 'Help others achieve specific goals and improve performance', icon: '🎯' },
-  { value: 'consultant', label: 'Consultant', description: 'Provide strategic insights and expert problem-solving', icon: '🧠' },
-  { value: 'counselor', label: 'Counselor', description: 'Offer emotional support and healing-focused guidance', icon: '❤️' },
-  { value: 'mentor', label: 'Mentor', description: 'Share wisdom and guide personal/professional development', icon: '💡' }
+  {
+    value: 'coach',
+    label: 'Coach',
+    description: 'Help others achieve specific goals and improve performance',
+    icon: '🎯'
+  },
+  {
+    value: 'consultant',
+    label: 'Consultant',
+    description: 'Provide strategic insights and expert problem-solving',
+    icon: '🧠'
+  },
+  {
+    value: 'counselor',
+    label: 'Counselor',
+    description: 'Offer emotional support and healing-focused guidance',
+    icon: '❤️'
+  },
+  {
+    value: 'mentor',
+    label: 'Mentor',
+    description: 'Share wisdom and guide personal/professional development',
+    icon: '💡'
+  }
 ]
 
 const SPECIALIZATIONS = {
@@ -28,8 +47,7 @@ function SignupWizard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [debugInfo, setDebugInfo] = useState([])
-
+  
   // 🔥 SIMPLIFIED FORM DATA
   const [formData, setFormData] = useState({
     // Step 1: Basic Info
@@ -52,12 +70,6 @@ function SignupWizard() {
     session_types: ['video']
   })
 
-  const addDebugInfo = (message) => {
-    const timestamp = new Date().toLocaleTimeString()
-    setDebugInfo(prev => [...prev, `[${timestamp}] ${message}`])
-    console.log(`[DEBUG] ${message}`)
-  }
-
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (error) setError('')
@@ -67,7 +79,7 @@ function SignupWizard() {
     setFormData(prev => ({
       ...prev,
       [field]: checked 
-        ? [...prev[field], value] 
+        ? [...prev[field], value]
         : prev[field].filter(item => item !== value)
     }))
   }
@@ -108,124 +120,40 @@ function SignupWizard() {
     setError('')
   }
 
-  // 🔥 BULLETPROOF SUBMIT WITH EXTRA SAFETY
+  // 🔥 SIMPLIFIED SUBMIT (No Supabase)
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateStep(3)) return
 
     setLoading(true)
     setError('')
-    setDebugInfo([])
 
     try {
-      addDebugInfo('🔥 Starting BULLETPROOF wizard signup...')
-
-      // Step 1: Create user account
-      addDebugInfo('📧 Creating user account with email: ' + formData.email)
-      const { data: authData, error: authError } = await authHelpers.signUp(
-        formData.email,
-        formData.password,
-        {
-          full_name: formData.full_name,
-          role: 'wizard'
-        }
-      )
-
-      if (authError) {
-        addDebugInfo('❌ Auth error: ' + authError.message)
-        throw authError
-      }
-
-      if (!authData.user) {
-        throw new Error('Failed to create account')
-      }
-
-      addDebugInfo('✅ User created successfully: ' + authData.user.id)
-
-      // Step 2: Wait for trigger to create profile (extra safety)
-      addDebugInfo('⏳ Waiting for profile creation...')
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds
-
-      // Step 3: Verify profile exists before creating wizard profile
-      addDebugInfo('🔍 Verifying profile exists...')
-      const { data: profile, error: profileError } = await authHelpers.getCurrentProfile()
-      
-      if (profileError || !profile) {
-        addDebugInfo('❌ Profile verification failed, creating manually...')
-        
-        // Fallback: Create profile manually if trigger failed
-        const { error: manualProfileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            full_name: formData.full_name,
-            email: formData.email,
-            role: 'wizard'
-          })
-
-        if (manualProfileError) {
-          addDebugInfo('❌ Manual profile creation failed: ' + manualProfileError.message)
-          throw new Error('Failed to create user profile: ' + manualProfileError.message)
-        }
-        
-        addDebugInfo('✅ Profile created manually')
-      } else {
-        addDebugInfo('✅ Profile verified successfully')
-      }
-
-      // Step 4: Create wizard profile
-      addDebugInfo('🧙‍♂️ Creating wizard profile...')
-      const wizardData = {
-        wizard_type: formData.wizard_type,
-        specialization: formData.specialization,
-        title: formData.title,
-        experience_years: parseInt(formData.experience_years),
-        hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : null,
-        bio_detailed: formData.bio,
-        why_wizard: formData.why_wizard,
-        certifications: formData.certifications ? formData.certifications.split(',').map(c => c.trim()) : [],
-        education: formData.education || null,
-        languages: formData.languages.split(',').map(l => l.trim()),
-        session_types: formData.session_types
-      }
-
-      const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(
-        wizardData,
-        authData.user.id
-      )
-
-      if (wizardError) {
-        addDebugInfo('❌ Wizard profile creation failed: ' + wizardError.message)
-        throw wizardError
-      }
-
-      addDebugInfo('✅ Wizard profile created successfully!')
-
-      // Success!
-      setSuccess(true)
-      login({
-        id: authData.user.id,
-        email: authData.user.email,
+      // Mock successful wizard signup
+      const mockWizard = {
+        id: Date.now().toString(),
+        email: formData.email,
         full_name: formData.full_name,
         role: 'wizard',
         wizard_type: formData.wizard_type,
-        status: 'pending'
-      })
+        status: 'pending',
+        ...formData
+      }
+
+      // Save to localStorage
+      localStorage.setItem('wizardoo_user', JSON.stringify(mockWizard))
+
+      // Success!
+      setSuccess(true)
+      login(mockWizard)
 
       // Redirect after success
       setTimeout(() => {
         navigate('/wizard-pending-approval')
       }, 2000)
-
     } catch (err) {
-      addDebugInfo('❌ Signup failed: ' + err.message)
       console.error('❌ Signup failed:', err)
-      
-      if (err.message?.includes('already registered')) {
-        setError('An account with this email already exists. Please sign in instead.')
-      } else {
-        setError(err.message || 'Something went wrong. Please try again.')
-      }
+      setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -249,6 +177,7 @@ function SignupWizard() {
             >
               <FaWandMagicSparkles className="text-4xl text-kadam-deep-green" />
             </motion.div>
+
             <h2 className="kadam-heading text-3xl mb-4 text-kadam-deep-green">🎉 Success!</h2>
             <p className="text-gray-600 kadam-body mb-6">
               Your wizard application has been submitted successfully!
@@ -508,7 +437,7 @@ function SignupWizard() {
                 alt="Wizardoo Logo"
                 className="h-12 w-auto mx-auto mb-6"
               />
-              
+
               <div className="flex items-center justify-center mb-4">
                 <span className="kadam-body-medium text-kadam-deep-green">
                   Step {currentStep} of 3
@@ -517,9 +446,9 @@ function SignupWizard() {
                   {Math.round((currentStep / 3) * 100)}% Complete
                 </span>
               </div>
-              
+
               <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-                <div 
+                <div
                   className="bg-kadam-gold h-2 rounded-full transition-all duration-500"
                   style={{ width: `${(currentStep / 3) * 100}%` }}
                 ></div>
@@ -529,18 +458,6 @@ function SignupWizard() {
             {/* Form */}
             <form onSubmit={handleSubmit}>
               {renderStep()}
-
-              {/* Debug Information */}
-              {debugInfo.length > 0 && (
-                <div className="mt-6 bg-gray-50 border border-gray-200 rounded-xl p-4">
-                  <h4 className="font-semibold text-gray-700 mb-2">Debug Information:</h4>
-                  <div className="text-sm text-gray-600 space-y-1 max-h-32 overflow-y-auto">
-                    {debugInfo.map((info, index) => (
-                      <div key={index}>{info}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Error Message */}
               <AnimatePresence>

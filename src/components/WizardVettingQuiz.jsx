@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowRight, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaGraduationCap } from 'react-icons/fa';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 import { wizardQuizQuestions } from '../data/quizData';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 function WizardVettingQuiz({ onComplete }) {
@@ -91,51 +90,12 @@ function WizardVettingQuiz({ onComplete }) {
     try {
       const quizResult = calculateResult();
       
-      // Save quiz attempt
-      const { error: attemptError } = await supabase
-        .from('quiz_attempts')
-        .insert({
-          user_id: user.id,
-          quiz_type: 'wizard_vetting',
-          score: quizResult.percentage,
-          answers: answers,
-          next_attempt_allowed_at: quizResult.status === 'rejected' 
-            ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
-            : null
-        });
-
-      if (attemptError) {
-        console.error('Error saving quiz attempt:', attemptError);
-      }
-
-      // Update wizard profile based on result
-      let updateData = {};
-      
-      if (quizResult.status === 'approved') {
-        updateData = { status: 'approved' };
-      } else if (quizResult.status === 'academy') {
-        updateData = { academy_enrolled: true, status: 'pending' };
-      } else {
-        updateData = { status: 'rejected' };
-      }
-
-      const { error: updateError } = await supabase
-        .from('wizards')
-        .update(updateData)
-        .eq('id', user.id);
-
-      if (updateError) {
-        console.error('Error updating wizard status:', updateError);
-        throw updateError;
-      }
-
       setResult(quizResult);
       setIsComplete(true);
-      
+
       if (onComplete) {
         onComplete(quizResult);
       }
-      
     } catch (error) {
       console.error('Error completing quiz:', error);
       alert('There was an error processing your quiz. Please try again.');
@@ -157,19 +117,18 @@ function WizardVettingQuiz({ onComplete }) {
           className="text-center mb-12"
         >
           <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 ${
-            result.status === 'approved' ? 'bg-green-100' :
-            result.status === 'academy' ? 'bg-yellow-100' :
-            'bg-red-100'
+            result.status === 'approved' ? 'bg-green-100' : 
+            result.status === 'academy' ? 'bg-yellow-100' : 'bg-red-100'
           }`}>
             {result.status === 'approved' && <FaCheckCircle className="text-4xl text-green-600" />}
             {result.status === 'academy' && <FaGraduationCap className="text-4xl text-yellow-600" />}
             {result.status === 'rejected' && <FaTimesCircle className="text-4xl text-red-600" />}
           </div>
-          
+
           <h1 className="kadam-heading text-4xl mb-4 text-kadam-deep-green">
             Quiz Complete!
           </h1>
-          
+
           <div className="bg-white rounded-2xl p-8 shadow-soft mb-8">
             <div className="text-6xl font-bold text-kadam-deep-green mb-4">
               {result.percentage}%
@@ -199,7 +158,7 @@ function WizardVettingQuiz({ onComplete }) {
               Go to Wizard Dashboard
             </button>
           )}
-          
+
           {result.status === 'academy' && (
             <button
               onClick={() => window.location.href = '/academy'}
@@ -209,7 +168,7 @@ function WizardVettingQuiz({ onComplete }) {
               Enroll in Wizardoo Academy
             </button>
           )}
-          
+
           {result.status === 'rejected' && (
             <div className="space-y-4">
               <p className="text-gray-600 kadam-body">
@@ -242,8 +201,8 @@ function WizardVettingQuiz({ onComplete }) {
                 <div
                   key={archetype}
                   className={`text-center p-4 rounded-xl border-2 ${
-                    isRecommended 
-                      ? 'border-kadam-gold bg-kadam-light-green' 
+                    isRecommended
+                      ? 'border-kadam-gold bg-kadam-light-green'
                       : 'border-gray-200'
                   }`}
                 >

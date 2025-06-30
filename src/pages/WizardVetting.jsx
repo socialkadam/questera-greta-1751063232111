@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
 import WizardVettingQuiz from '../components/WizardVettingQuiz';
 import ScrollToTop from '../components/ScrollToTop';
 import { FaClock, FaExclamationTriangle } from 'react-icons/fa';
@@ -21,27 +20,17 @@ function WizardVetting() {
     if (!user) return;
 
     try {
-      // Check for recent failed attempts
-      const { data: attempts, error } = await supabase
-        .from('quiz_attempts')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('quiz_type', 'wizard_vetting')
-        .order('completed_at', { ascending: false })
-        .limit(1);
-
-      if (error) {
-        console.error('Error checking quiz attempts:', error);
-        return;
-      }
-
-      if (attempts && attempts.length > 0) {
-        const lastAttempt = attempts[0];
-        setLastAttempt(lastAttempt);
+      // Check localStorage for recent failed attempts
+      const attemptKey = `wizard_quiz_attempt_${user.id}`;
+      const lastAttemptData = localStorage.getItem(attemptKey);
+      
+      if (lastAttemptData) {
+        const attempt = JSON.parse(lastAttemptData);
+        setLastAttempt(attempt);
 
         // Check if they need to wait 30 days
-        if (lastAttempt.next_attempt_allowed_at) {
-          const nextAttemptDate = new Date(lastAttempt.next_attempt_allowed_at);
+        if (attempt.next_attempt_allowed_at) {
+          const nextAttemptDate = new Date(attempt.next_attempt_allowed_at);
           const now = new Date();
           
           if (now < nextAttemptDate) {
@@ -58,6 +47,19 @@ function WizardVetting() {
   };
 
   const handleQuizComplete = (result) => {
+    // Save attempt to localStorage
+    const attemptData = {
+      user_id: user.id,
+      quiz_type: 'wizard_vetting',
+      score: result.percentage,
+      completed_at: new Date().toISOString(),
+      next_attempt_allowed_at: result.status === 'rejected' 
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
+        : null
+    };
+
+    localStorage.setItem(`wizard_quiz_attempt_${user.id}`, JSON.stringify(attemptData));
+
     // Handle different outcomes
     if (result.status === 'approved') {
       // Redirect to wizard dashboard or success page
@@ -92,15 +94,15 @@ function WizardVetting() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-yellow-100 rounded-full mb-6">
               <FaClock className="text-4xl text-yellow-600" />
             </div>
-            
+
             <h1 className="kadam-heading text-3xl mb-6 text-kadam-deep-green">
               Quiz Retake Cooldown
             </h1>
-            
+
             <p className="text-xl text-gray-600 kadam-body-medium mb-6">
               You need to wait 30 days before retaking the wizard vetting quiz.
             </p>
-            
+
             <div className="bg-kadam-light-green p-6 rounded-xl mb-8">
               <p className="text-kadam-deep-green font-semibold mb-2">
                 Next attempt available:
@@ -109,7 +111,7 @@ function WizardVetting() {
                 {nextAttemptDate.toLocaleDateString()}
               </p>
             </div>
-            
+
             {lastAttempt && (
               <div className="text-left bg-gray-50 p-6 rounded-xl mb-8">
                 <h3 className="font-semibold text-kadam-deep-green mb-4">Your Last Attempt:</h3>
@@ -127,11 +129,11 @@ function WizardVetting() {
                 </div>
               </div>
             )}
-            
+
             <p className="text-gray-600 kadam-body mb-8">
               Use this time to gain more experience in your chosen archetype and study the materials we provide.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => window.location.href = '/academy'}
@@ -168,7 +170,7 @@ function WizardVetting() {
           <p className="text-2xl text-gray-600 kadam-body-medium max-w-4xl mx-auto mb-8">
             Complete this comprehensive assessment to demonstrate your expertise and join our certified wizard network
           </p>
-          
+
           {/* Requirements */}
           <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 max-w-3xl mx-auto">
             <div className="flex items-center justify-center mb-4">

@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowRight, FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 import { seekerQuizQuestions } from '../data/quizData';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import TAPSQuadrant from './TAPSQuadrant';
 
@@ -44,19 +43,21 @@ function SeekerQuiz({ onComplete }) {
       consultant: 0
     };
 
+    // Calculate archetype scores
     Object.values(answers).forEach(answer => {
       scores[answer.archetype] += answer.points;
     });
 
-    // Find the archetype with highest score
     const recommendedArchetype = Object.keys(scores).reduce((a, b) => 
       scores[a] > scores[b] ? a : b
     );
 
+    const totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
+
     return {
       scores,
       recommendedArchetype,
-      totalScore: Object.values(scores).reduce((sum, score) => sum + score, 0)
+      totalScore
     };
   };
 
@@ -66,29 +67,13 @@ function SeekerQuiz({ onComplete }) {
     try {
       const quizResult = calculateResult();
       
-      // Save to Supabase
-      const { error } = await supabase
-        .from('seeker_profiles')
-        .upsert({
-          user_id: user.id,
-          quiz_answers: answers,
-          recommended_archetype: quizResult.recommendedArchetype,
-          quiz_score: quizResult.totalScore
-        });
-
-      if (error) {
-        console.error('Error saving quiz result:', error);
-        throw error;
-      }
-
       setResult(quizResult);
       setIsComplete(true);
-      
+
       // Call parent completion handler
       if (onComplete) {
         onComplete(quizResult);
       }
-      
     } catch (error) {
       console.error('Error completing quiz:', error);
       alert('There was an error saving your quiz. Please try again.');
@@ -150,8 +135,8 @@ function SeekerQuiz({ onComplete }) {
                 <div
                   key={archetype}
                   className={`text-center p-4 rounded-xl border-2 ${
-                    isRecommended 
-                      ? 'border-kadam-gold bg-kadam-light-green' 
+                    isRecommended
+                      ? 'border-kadam-gold bg-kadam-light-green'
                       : 'border-gray-200'
                   }`}
                 >
