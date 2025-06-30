@@ -198,14 +198,18 @@ function SignupWizard() {
         throw new Error('Failed to create user account - no user returned')
       }
 
-      addDebugInfo('✅ User account created with ID: ' + authData.user.id)
+      addDebugInfo('✅ User account and profile created with ID: ' + authData.user.id)
 
-      // Step 2: Create wizard profile - Pass the user ID explicitly
+      // Step 2: Wait a moment to ensure everything is committed
+      addDebugInfo('⏳ Ensuring user is fully authenticated...')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Step 3: Create wizard profile - Pass the user ID explicitly
       addDebugInfo('🧙‍♂️ Creating wizard profile with user ID: ' + authData.user.id)
       
       const wizardData = {
         full_name: formData.full_name,
-        email: formData.email, // Include email for profile creation
+        email: formData.email,
         wizard_type: formData.wizard_type,
         specialization: formData.specialization,
         title: formData.title,
@@ -260,10 +264,14 @@ function SignupWizard() {
         setError('Please enter a valid email address.')
       } else if (err.message?.includes('Password')) {
         setError('Password must be at least 6 characters long.')
-      } else if (err.message?.includes('No authenticated user found')) {
-        setError('Authentication issue. Please try again or contact support.')
-      } else if (err.message?.includes('row-level security') || err.message?.includes('RLS')) {
-        setError('Database security issue. Please contact support.')
+      } else if (err.message?.includes('Authentication system error')) {
+        setError('Authentication system is busy. Please wait a moment and try again.')
+      } else if (err.message?.includes('Authentication mismatch')) {
+        setError('Authentication issue. Please refresh the page and try again.')
+      } else if (err.message?.includes('foreign key constraint')) {
+        setError('System synchronization issue. Please try again in a moment.')
+      } else if (err.message?.includes('User profile not found')) {
+        setError('Profile creation issue. Please contact support.')
       } else if (err.message?.includes('Database error')) {
         setError('Database connection issue. Please try again.')
       } else if (err.message?.includes('Failed to create user profile')) {

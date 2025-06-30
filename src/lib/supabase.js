@@ -23,7 +23,7 @@ supabase.from('profiles').select('count').limit(1)
 
 // Helper functions for auth and data operations
 export const authHelpers = {
-  // Sign up with role - Enhanced with debugging and auth state management
+  // Sign up with role - Enhanced with better error handling and timing
   async signUp(email, password, userData = {}) {
     try {
       console.log('🔄 Starting signup process for:', email)
@@ -53,41 +53,59 @@ export const authHelpers = {
 
       console.log('✅ Auth signup successful:', data.user.id)
 
-      // Step 2: Wait for auth state to be established
-      console.log('⏳ Waiting for auth state to be established...')
-      await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds
+      // Step 2: Wait longer for auth user to be fully created
+      console.log('⏳ Waiting for auth user to be fully committed...')
+      await new Promise(resolve => setTimeout(resolve, 3000)) // Wait 3 seconds
 
-      // Step 3: Verify authentication by getting current user
-      const { data: currentUser, error: authError } = await supabase.auth.getUser()
+      // Step 3: Verify auth user exists before creating profile
+      console.log('🔍 Verifying auth user exists...')
+      const { data: authUser, error: authCheckError } = await supabase.auth.getUser()
       
-      if (authError || !currentUser.user) {
-        console.log('⚠️ User not authenticated yet, trying manual session setup...')
-        
-        // Try setting the session manually if needed
-        if (data.session) {
-          await supabase.auth.setSession({
-            access_token: data.session.access_token,
-            refresh_token: data.session.refresh_token
-          })
-          
-          // Wait a bit more for session to be established
-          await new Promise(resolve => setTimeout(resolve, 1000))
-        }
+      if (authCheckError) {
+        console.error('❌ Auth user check error:', authCheckError)
+        throw new Error('Failed to verify user creation')
       }
 
-      console.log('✅ User authentication verified')
+      if (!authUser.user || authUser.user.id !== data.user.id) {
+        console.error('❌ Auth user mismatch or not found')
+        throw new Error('User verification failed')
+      }
 
-      // Step 4: Check if profile was created by trigger
-      console.log('🔍 Checking for profile creation...')
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single()
+      console.log('✅ Auth user verified:', authUser.user.id)
 
-      if (profileError && profileError.code === 'PGRST116') {
-        // Profile doesn't exist, create it manually
+      // Step 4: Check if profile was auto-created by trigger
+      console.log('🔍 Checking for auto-created profile...')
+      let profileExists = false
+      let retries = 3
+      
+      while (retries > 0 && !profileExists) {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single()
+
+        if (profile) {
+          console.log('✅ Profile exists (created by trigger):', profile)
+          profileExists = true
+          break
+        }
+
+        if (profileError && profileError.code !== 'PGRST116') {
+          console.error('❌ Profile check error:', profileError)
+          throw new Error(`Database error checking profile: ${profileError.message}`)
+        }
+
+        console.log(`⏳ Profile not found, retrying... (${retries} attempts left)`)
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        retries--
+      }
+
+      // Step 5: If profile still doesn't exist, create it manually
+      if (!profileExists) {
         console.log('📝 Creating profile manually...')
+        
+        // Double-check that we can insert into profiles table
         const { data: newProfile, error: insertError } = await supabase
           .from('profiles')
           .insert({
@@ -101,14 +119,16 @@ export const authHelpers = {
 
         if (insertError) {
           console.error('❌ Manual profile creation error:', insertError)
+          
+          // If it's a foreign key constraint, the auth user might not be properly created
+          if (insertError.message.includes('foreign key constraint')) {
+            throw new Error('Authentication system error. Please try again in a few moments.')
+          }
+          
           throw new Error(`Failed to create user profile: ${insertError.message}`)
         }
+        
         console.log('✅ Profile created manually:', newProfile)
-      } else if (profileError) {
-        console.error('❌ Profile check error:', profileError)
-        throw new Error(`Database error: ${profileError.message}`)
-      } else {
-        console.log('✅ Profile exists (created by trigger):', profile)
       }
 
       return { data, error: null }
@@ -200,6 +220,15 @@ export const wizardHelpers = {
         // Use provided user ID (for cases where we just created the user)
         console.log('👤 Using provided user ID:', userId)
         authenticatedUser = { id: userId }
+        
+        // Verify this user ID exists in auth.users
+        console.log('🔍 Verifying provided user ID exists in auth...')
+        const { data: authUser, error: authError } = await supabase.auth.getUser()
+        
+        if (authError || !authUser.user || authUser.user.id !== userId) {
+          console.error('❌ Provided user ID does not match current auth user')
+          throw new Error('Authentication mismatch. Please try signing in again.')
+        }
       } else {
         // Get current authenticated user
         const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -212,47 +241,38 @@ export const wizardHelpers = {
 
       console.log('👤 Working with user:', authenticatedUser.id)
 
-      // Check if profile exists for this user
-      console.log('🔍 Checking if profile exists...')
+      // Verify profile exists and user is authenticated
+      console.log('🔍 Verifying profile exists...')
       const { data: existingProfile, error: profileCheckError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', authenticatedUser.id)
         .single()
 
-      if (profileCheckError && profileCheckError.code === 'PGRST116') {
-        // Profile doesn't exist, create it
-        console.log('📝 Creating missing profile for wizard...')
-        const { error: profileError } = await supabase
+      if (profileCheckError) {
+        if (profileCheckError.code === 'PGRST116') {
+          throw new Error('User profile not found. Please contact support.')
+        } else {
+          console.error('❌ Profile check error:', profileCheckError)
+          throw new Error(`Database error checking profile: ${profileCheckError.message}`)
+        }
+      }
+
+      console.log('✅ Profile exists:', existingProfile.id)
+
+      // Update profile role if needed
+      if (existingProfile.role !== 'wizard') {
+        console.log('📝 Updating profile role to wizard...')
+        const { error: updateError } = await supabase
           .from('profiles')
-          .insert({
-            id: authenticatedUser.id,
-            full_name: wizardData.full_name || '',
-            email: wizardData.email || '',
-            role: 'wizard'
-          })
+          .update({ role: 'wizard' })
+          .eq('id', authenticatedUser.id)
 
-        if (profileError) {
-          console.error('❌ Profile creation error:', profileError)
-          throw new Error(`Failed to create profile: ${profileError.message}`)
+        if (updateError) {
+          console.error('❌ Profile role update error:', updateError)
+          throw new Error(`Failed to update profile role: ${updateError.message}`)
         }
-        console.log('✅ Profile created successfully')
-      } else if (profileCheckError) {
-        console.error('❌ Profile check error:', profileCheckError)
-        throw new Error(`Database error checking profile: ${profileCheckError.message}`)
-      } else {
-        console.log('✅ Profile exists, updating role if needed...')
-        if (existingProfile.role !== 'wizard') {
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ role: 'wizard' })
-            .eq('id', authenticatedUser.id)
-
-          if (updateError) {
-            console.error('❌ Profile role update error:', updateError)
-            throw new Error(`Failed to update profile role: ${updateError.message}`)
-          }
-        }
+        console.log('✅ Profile role updated to wizard')
       }
 
       // Now create the wizard profile
