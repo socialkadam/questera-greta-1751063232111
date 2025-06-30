@@ -36,38 +36,31 @@ function Signup() {
       setError('Full name is required')
       return false
     }
-
     if (!formData.email.trim()) {
       setError('Email is required')
       return false
     }
-
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setError('Please enter a valid email address')
       return false
     }
-
     if (!formData.password) {
       setError('Password is required')
       return false
     }
-
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long')
       return false
     }
-
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
       return false
     }
-
     return true
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
     if (!validateForm()) return
 
     setLoading(true)
@@ -76,7 +69,7 @@ function Signup() {
 
     try {
       console.log('🚀 Starting seeker signup process...')
-      
+
       // Sign up the user
       const { data, error: signupError } = await authHelpers.signUp(
         formData.email,
@@ -96,7 +89,7 @@ function Signup() {
       }
 
       console.log('✅ Seeker signup successful!')
-      
+
       // Show success message
       setSuccess(true)
 
@@ -118,7 +111,7 @@ function Signup() {
 
     } catch (err) {
       console.error('❌ Signup failed:', err)
-      
+
       // Handle specific Supabase errors
       if (err.message?.includes('already registered')) {
         setError('An account with this email already exists. Please sign in instead.')
@@ -152,15 +145,12 @@ function Signup() {
             >
               <FaCheckCircle className="text-4xl text-green-600" />
             </motion.div>
-            
             <h2 className="kadam-heading text-3xl mb-4 text-kadam-deep-green">
               Welcome to Wizardoo!
             </h2>
-            
             <p className="text-gray-600 kadam-body mb-6">
               Your account has been created successfully. You're being redirected to start your transformation journey!
             </p>
-
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-kadam-deep-green mx-auto"></div>
           </div>
         </motion.div>
@@ -176,7 +166,15 @@ function Signup() {
         className="max-w-md w-full space-y-8"
       >
         <div className="kadam-card-elevated p-8 md:p-10">
+          {/* Logo and Header */}
           <div className="text-center mb-8">
+            <div className="mb-6">
+              <img 
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
+                alt="Wizardoo Logo" 
+                className="h-12 w-auto mx-auto"
+              />
+            </div>
             <h2 className="kadam-heading text-3xl text-kadam-deep-green">Join Wizardoo</h2>
             <p className="mt-2 text-gray-600 kadam-body">
               Start your transformation journey today

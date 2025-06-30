@@ -37,23 +37,19 @@ function Login() {
       setError('Email is required')
       return false
     }
-
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setError('Please enter a valid email address')
       return false
     }
-
     if (!formData.password) {
       setError('Password is required')
       return false
     }
-
     return true
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
     if (!validateForm()) return
 
     setLoading(true)
@@ -62,7 +58,7 @@ function Login() {
 
     try {
       console.log('🔄 Starting login process...')
-      
+
       const { data, error: signInError } = await authHelpers.signIn(
         formData.email,
         formData.password
@@ -80,7 +76,7 @@ function Login() {
 
       // Get user profile
       const { data: profile, error: profileError } = await authHelpers.getCurrentProfile()
-      
+
       if (profileError) {
         console.warn('Could not fetch profile:', profileError)
       }
@@ -102,7 +98,7 @@ function Login() {
 
     } catch (err) {
       console.error('❌ Login failed:', err)
-      
+
       // Handle specific errors
       if (err.message?.includes('Invalid login credentials')) {
         setError('Invalid email or password. Please check your credentials and try again.')
@@ -136,15 +132,12 @@ function Login() {
             >
               <FaCheckCircle className="text-4xl text-green-600" />
             </motion.div>
-            
             <h2 className="kadam-heading text-3xl mb-4 text-kadam-deep-green">
               Welcome Back!
             </h2>
-            
             <p className="text-gray-600 kadam-body mb-6">
               You've been signed in successfully. Redirecting you now...
             </p>
-
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-kadam-deep-green mx-auto"></div>
           </div>
         </motion.div>
@@ -160,7 +153,15 @@ function Login() {
         className="max-w-lg w-full space-y-8"
       >
         <div className="kadam-card-elevated p-12">
+          {/* Logo and Header */}
           <div className="text-center mb-12">
+            <div className="mb-6">
+              <img 
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
+                alt="Wizardoo Logo" 
+                className="h-12 w-auto mx-auto"
+              />
+            </div>
             <h2 className="kadam-heading text-3xl mb-4">Welcome Back</h2>
             <p className="kadam-body text-gray-600 text-lg">
               Sign in to continue your transformation journey

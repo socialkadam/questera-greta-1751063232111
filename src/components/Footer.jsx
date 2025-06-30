@@ -9,21 +9,11 @@ function Footer() {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-4 mb-6">
-              <img
-                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751085144022-WIZARDOO%20%28GRETA%20LOGO%29.png"
-                alt="Wizardoo Logo"
+              <img 
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
+                alt="Wizardoo Logo" 
                 className="h-10 w-auto"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'block'
-                }}
               />
-              <span
-                className="font-display font-bold text-3xl text-white"
-                style={{ display: 'none' }}
-              >
-                WIZARDOO
-              </span>
             </div>
             <p className="text-kadam-gold font-semibold text-xl mb-6 kadam-subheading">
               Your Personal Transformation Engine

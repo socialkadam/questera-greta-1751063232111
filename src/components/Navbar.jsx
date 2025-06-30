@@ -23,25 +23,14 @@ function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-gray-700" style={{ backgroundColor: '#013D39' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center h-16 sm:h-20">
-          
           {/* Left Side - Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center" onClick={closeMobileMenu}>
               <img 
-                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751085144022-WIZARDOO%20%28GRETA%20LOGO%29.png" 
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
                 alt="Wizardoo Logo" 
                 className="h-8 sm:h-10 lg:h-12 w-auto"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'block'
-                }}
               />
-              <span 
-                className="font-display font-bold text-lg sm:text-xl lg:text-2xl text-white ml-2"
-                style={{ display: 'none' }}
-              >
-                WIZARDOO
-              </span>
             </Link>
           </div>
 
@@ -78,7 +67,7 @@ function Navbar() {
                 </div>
               </div>
             </div>
-            
+
             <Link
               to="/wizards"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
@@ -89,6 +78,7 @@ function Navbar() {
             >
               Find Wizards
             </Link>
+
             <Link
               to="/become-wizard"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
@@ -99,6 +89,7 @@ function Navbar() {
             >
               Become a Wizard
             </Link>
+
             <Link
               to="/blog"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
@@ -109,6 +100,7 @@ function Navbar() {
             >
               Resources
             </Link>
+
             <Link
               to="/contact"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
@@ -129,7 +121,7 @@ function Navbar() {
                 <>
                   {/* Role Selector */}
                   <UserRoleSelector />
-                  
+
                   {/* Dashboard Link - Role-based */}
                   {hasPermission('canAccessDashboard') && (
                     <Link
@@ -139,7 +131,7 @@ function Navbar() {
                       Dashboard
                     </Link>
                   )}
-                  
+
                   {/* Profile Link */}
                   <Link
                     to="/profile"
@@ -148,7 +140,7 @@ function Navbar() {
                     <FaUser className="mr-2" />
                     Profile
                   </Link>
-                  
+
                   <button
                     onClick={logout}
                     className="border-2 border-kadam-gold text-kadam-gold hover:bg-kadam-gold hover:text-kadam-deep-green font-semibold py-2 px-4 lg:py-3 lg:px-6 rounded-xl lg:rounded-2xl transition-all duration-300 text-sm lg:text-base"
@@ -210,20 +202,10 @@ function Navbar() {
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center">
               <img 
-                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751085144022-WIZARDOO%20%28GRETA%20LOGO%29.png" 
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
                 alt="Wizardoo Logo" 
                 className="h-8 w-auto mr-3"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'block'
-                }}
               />
-              <span 
-                className="font-display font-bold text-lg text-kadam-deep-green"
-                style={{ display: 'none' }}
-              >
-                WIZARDOO
-              </span>
             </div>
             <button
               onClick={closeMobileMenu}
@@ -247,7 +229,6 @@ function Navbar() {
               >
                 About Us
               </Link>
-              
               <Link
                 to="/how-it-works"
                 className={`block px-6 py-3 text-lg font-medium transition-colors ${
@@ -259,7 +240,6 @@ function Navbar() {
               >
                 How Wizardoo Works
               </Link>
-              
               <Link
                 to="/wizards"
                 className={`block px-6 py-3 text-lg font-medium transition-colors ${
@@ -271,7 +251,6 @@ function Navbar() {
               >
                 Find Wizards
               </Link>
-              
               <Link
                 to="/become-wizard"
                 className={`block px-6 py-3 text-lg font-medium transition-colors ${
@@ -283,7 +262,6 @@ function Navbar() {
               >
                 Become a Wizard
               </Link>
-              
               <Link
                 to="/blog"
                 className={`block px-6 py-3 text-lg font-medium transition-colors ${
@@ -295,7 +273,6 @@ function Navbar() {
               >
                 Resources
               </Link>
-              
               <Link
                 to="/contact"
                 className={`block px-6 py-3 text-lg font-medium transition-colors ${
@@ -315,7 +292,7 @@ function Navbar() {
                   <div className="px-6 py-3">
                     <UserRoleSelector />
                   </div>
-                  
+
                   {hasPermission('canAccessDashboard') && (
                     <Link
                       to="/dashboard"
@@ -329,7 +306,7 @@ function Navbar() {
                       Dashboard
                     </Link>
                   )}
-                  
+
                   <Link
                     to="/profile"
                     className={`flex items-center px-6 py-3 text-lg font-medium transition-colors ${
@@ -342,7 +319,7 @@ function Navbar() {
                     <FaUser className="mr-3" />
                     Profile
                   </Link>
-                  
+
                   <button
                     onClick={() => {
                       logout()

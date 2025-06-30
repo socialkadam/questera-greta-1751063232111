@@ -1,23 +1,32 @@
-import {motion} from 'framer-motion';
-import {FaClock, FaEnvelope, FaEdit} from 'react-icons/fa';
-import {FaWandMagicSparkles} from 'react-icons/fa6';
-import {Link} from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FaClock, FaEnvelope, FaEdit } from 'react-icons/fa';
+import { FaWandMagicSparkles } from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
 import ScrollToTop from '../components/ScrollToTop';
 
 function WizardPendingApproval() {
   return (
     <div className="min-h-screen bg-kadam-off-white flex items-center justify-center py-12 px-4">
       <motion.div
-        initial={{opacity: 0, y: 30}}
-        animate={{opacity: 1, y: 0}}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
         className="max-w-2xl w-full text-center"
       >
         <div className="kadam-card-elevated p-12">
+          {/* Logo */}
+          <div className="mb-6">
+            <img 
+              src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
+              alt="Wizardoo Logo" 
+              className="h-12 w-auto mx-auto mb-6"
+            />
+          </div>
+
           {/* Success Icon */}
           <motion.div
-            initial={{scale: 0}}
-            animate={{scale: 1}}
-            transition={{delay: 0.2, type: "spring", stiffness: 200}}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="inline-flex items-center justify-center w-24 h-24 bg-kadam-gold rounded-full mb-8"
           >
             <FaWandMagicSparkles className="text-4xl text-kadam-deep-green" />
@@ -27,7 +36,6 @@ function WizardPendingApproval() {
           <h1 className="kadam-heading text-3xl mb-6 text-kadam-deep-green">
             Welcome to Wizardoo!
           </h1>
-          
           <p className="text-xl text-gray-700 mb-8 kadam-body-medium">
             Your wizard application has been submitted successfully and is now under review.
           </p>
@@ -41,8 +49,7 @@ function WizardPendingApproval() {
               </span>
             </div>
             <p className="text-gray-600 kadam-body">
-              Our team typically reviews applications within 2-3 business days. 
-              We'll notify you via email once your profile has been approved.
+              Our team typically reviews applications within 2-3 business days. We'll notify you via email once your profile has been approved.
             </p>
           </div>
 
@@ -51,7 +58,6 @@ function WizardPendingApproval() {
             <h2 className="kadam-subheading text-xl mb-6 text-kadam-deep-green text-center">
               What Happens Next?
             </h2>
-            
             <div className="space-y-4">
               <div className="flex items-start">
                 <div className="bg-kadam-gold rounded-full p-2 mr-4 mt-1">
@@ -64,7 +70,6 @@ function WizardPendingApproval() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-start">
                 <div className="bg-kadam-gold rounded-full p-2 mr-4 mt-1">
                   <span className="text-kadam-deep-green font-bold text-sm">2</span>
@@ -76,7 +81,6 @@ function WizardPendingApproval() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-start">
                 <div className="bg-kadam-gold rounded-full p-2 mr-4 mt-1">
                   <span className="text-kadam-deep-green font-bold text-sm">3</span>
@@ -101,8 +105,8 @@ function WizardPendingApproval() {
             </div>
             <p className="text-gray-600 kadam-body">
               Contact our support team at{' '}
-              <a 
-                href="mailto:wizards@wizardoo.com" 
+              <a
+                href="mailto:wizards@wizardoo.com"
                 className="text-kadam-deep-green hover:text-kadam-medium-green font-medium"
               >
                 wizards@wizardoo.com
@@ -118,7 +122,6 @@ function WizardPendingApproval() {
             >
               Return to Homepage
             </Link>
-            
             <Link
               to="/profile"
               className="kadam-button text-center flex items-center justify-center"
@@ -129,7 +132,6 @@ function WizardPendingApproval() {
           </div>
         </div>
       </motion.div>
-
       <ScrollToTop />
     </div>
   );
