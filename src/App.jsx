@@ -6,6 +6,8 @@ import Home from './pages/Home'
 import Wizards from './pages/Wizards'
 import WizardListing from './pages/WizardListing'
 import About from './pages/About'
+import HowItWorks from './pages/HowItWorks'
+import BecomeWizard from './pages/BecomeWizard'
 import Blog from './pages/Blog'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
@@ -26,6 +28,8 @@ function App() {
               <Route path="/wizards" element={<WizardListing />} />
               <Route path="/wizards-overview" element={<Wizards />} />
               <Route path="/about" element={<About />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/become-wizard" element={<BecomeWizard />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />

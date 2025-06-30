@@ -109,7 +109,7 @@ function Home() {
   // Quick test examples
   const quickTests = [
     "I keep procrastinating and feel burned out at work",
-    "I want to lose weight and get fit", 
+    "I want to lose weight and get fit",
     "I'm stressed and anxious about my relationship",
     "I need help growing my startup business"
   ]
@@ -248,7 +248,6 @@ function Home() {
         <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-center mb-8 sm:mb-16">
           Choose Your Wizard Type
         </h2>
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {wizardTypes.map((wizard) => (
             <motion.div

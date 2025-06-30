@@ -20,7 +20,7 @@ function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-soft sticky top-0 z-50 border-b border-gray-100">
+    <nav className="sticky top-0 z-50 border-b border-gray-700" style={{ backgroundColor: '#013D39' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center h-16 sm:h-20">
           
@@ -37,7 +37,7 @@ function Navbar() {
                 }}
               />
               <span 
-                className="font-display font-bold text-lg sm:text-xl lg:text-2xl text-kadam-deep-green ml-2"
+                className="font-display font-bold text-lg sm:text-xl lg:text-2xl text-white ml-2"
                 style={{ display: 'none' }}
               >
                 WIZARDOO
@@ -47,42 +47,74 @@ function Navbar() {
 
           {/* Center Navigation - Desktop */}
           <div className="hidden lg:flex items-center space-x-8 xl:space-x-12">
-            <Link
-              to="/about"
-              className={`font-medium transition-all duration-300 text-base xl:text-lg ${
-                isActive('/about')
-                  ? 'text-kadam-deep-green border-b-3 border-kadam-gold pb-1'
-                  : 'text-gray-600 hover:text-kadam-deep-green'
-              }`}
-            >
-              About
-            </Link>
+            <div className="relative group">
+              <Link
+                to="/about"
+                className={`font-medium transition-all duration-300 text-base xl:text-lg ${
+                  isActive('/about') || isActive('/how-it-works')
+                    ? 'text-kadam-gold border-b-3 border-kadam-gold pb-1'
+                    : 'text-white hover:text-kadam-gold'
+                }`}
+              >
+                About
+              </Link>
+              {/* Dropdown for About */}
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-large border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className="p-2">
+                  <Link
+                    to="/about"
+                    className="block px-4 py-3 text-kadam-deep-green hover:bg-kadam-light-green rounded-lg transition-colors"
+                    onClick={closeMobileMenu}
+                  >
+                    About Us
+                  </Link>
+                  <Link
+                    to="/how-it-works"
+                    className="block px-4 py-3 text-kadam-deep-green hover:bg-kadam-light-green rounded-lg transition-colors"
+                    onClick={closeMobileMenu}
+                  >
+                    How Wizardoo Works
+                  </Link>
+                </div>
+              </div>
+            </div>
+            
             <Link
               to="/wizards"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
                 isActive('/wizards')
-                  ? 'text-kadam-deep-green border-b-3 border-kadam-gold pb-1'
-                  : 'text-gray-600 hover:text-kadam-deep-green'
+                  ? 'text-kadam-gold border-b-3 border-kadam-gold pb-1'
+                  : 'text-white hover:text-kadam-gold'
               }`}
             >
-              Our Wizards
+              Find Wizards
+            </Link>
+            <Link
+              to="/become-wizard"
+              className={`font-medium transition-all duration-300 text-base xl:text-lg ${
+                isActive('/become-wizard')
+                  ? 'text-kadam-gold border-b-3 border-kadam-gold pb-1'
+                  : 'text-white hover:text-kadam-gold'
+              }`}
+            >
+              Become a Wizard
             </Link>
             <Link
               to="/blog"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
                 isActive('/blog')
-                  ? 'text-kadam-deep-green border-b-3 border-kadam-gold pb-1'
-                  : 'text-gray-600 hover:text-kadam-deep-green'
+                  ? 'text-kadam-gold border-b-3 border-kadam-gold pb-1'
+                  : 'text-white hover:text-kadam-gold'
               }`}
             >
-              Blog
+              Resources
             </Link>
             <Link
               to="/contact"
               className={`font-medium transition-all duration-300 text-base xl:text-lg ${
                 isActive('/contact')
-                  ? 'text-kadam-deep-green border-b-3 border-kadam-gold pb-1'
-                  : 'text-gray-600 hover:text-kadam-deep-green'
+                  ? 'text-kadam-gold border-b-3 border-kadam-gold pb-1'
+                  : 'text-white hover:text-kadam-gold'
               }`}
             >
               Contact
@@ -102,7 +134,7 @@ function Navbar() {
                   {hasPermission('canAccessDashboard') && (
                     <Link
                       to="/dashboard"
-                      className="text-gray-600 hover:text-kadam-deep-green transition-colors font-medium"
+                      className="text-white hover:text-kadam-gold transition-colors font-medium"
                     >
                       Dashboard
                     </Link>
@@ -111,7 +143,7 @@ function Navbar() {
                   {/* Profile Link */}
                   <Link
                     to="/profile"
-                    className="flex items-center text-gray-600 hover:text-kadam-deep-green transition-colors font-medium"
+                    className="flex items-center text-white hover:text-kadam-gold transition-colors font-medium"
                   >
                     <FaUser className="mr-2" />
                     Profile
@@ -119,7 +151,7 @@ function Navbar() {
                   
                   <button
                     onClick={logout}
-                    className="border-2 border-kadam-deep-green text-kadam-deep-green hover:bg-kadam-deep-green hover:text-white font-semibold py-2 px-4 lg:py-3 lg:px-6 rounded-xl lg:rounded-2xl transition-all duration-300 text-sm lg:text-base"
+                    className="border-2 border-kadam-gold text-kadam-gold hover:bg-kadam-gold hover:text-kadam-deep-green font-semibold py-2 px-4 lg:py-3 lg:px-6 rounded-xl lg:rounded-2xl transition-all duration-300 text-sm lg:text-base"
                   >
                     Logout
                   </button>
@@ -128,15 +160,15 @@ function Navbar() {
                 <>
                   <Link
                     to="/login"
-                    className="text-kadam-deep-green hover:text-kadam-medium-green font-semibold transition-colors text-sm lg:text-base"
+                    className="text-white hover:text-kadam-gold font-semibold transition-colors text-sm lg:text-base"
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup"
-                    className="bg-kadam-deep-green hover:bg-kadam-medium-green text-white font-semibold py-2 px-4 lg:py-3 lg:px-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-soft hover:shadow-medium border-2 border-kadam-deep-green text-sm lg:text-base"
+                    className="bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green font-semibold py-2 px-4 lg:py-3 lg:px-6 rounded-xl lg:rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-soft hover:shadow-medium border-2 border-kadam-gold text-sm lg:text-base"
                   >
-                    Sign Up
+                    Get Started
                   </Link>
                 </>
               )}
@@ -146,7 +178,8 @@ function Navbar() {
             <div className="lg:hidden">
               <button
                 onClick={toggleMobileMenu}
-                className="text-gray-600 hover:text-kadam-deep-green transition-colors p-2"
+                className="transition-colors p-2"
+                style={{ color: '#fab100' }}
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? (
@@ -212,7 +245,19 @@ function Navbar() {
                 }`}
                 onClick={closeMobileMenu}
               >
-                About
+                About Us
+              </Link>
+              
+              <Link
+                to="/how-it-works"
+                className={`block px-6 py-3 text-lg font-medium transition-colors ${
+                  isActive('/how-it-works')
+                    ? 'text-kadam-deep-green bg-kadam-light-green border-r-4 border-kadam-gold'
+                    : 'text-gray-600 hover:text-kadam-deep-green hover:bg-gray-50'
+                }`}
+                onClick={closeMobileMenu}
+              >
+                How Wizardoo Works
               </Link>
               
               <Link
@@ -224,7 +269,19 @@ function Navbar() {
                 }`}
                 onClick={closeMobileMenu}
               >
-                Our Wizards
+                Find Wizards
+              </Link>
+              
+              <Link
+                to="/become-wizard"
+                className={`block px-6 py-3 text-lg font-medium transition-colors ${
+                  isActive('/become-wizard')
+                    ? 'text-kadam-deep-green bg-kadam-light-green border-r-4 border-kadam-gold'
+                    : 'text-gray-600 hover:text-kadam-deep-green hover:bg-gray-50'
+                }`}
+                onClick={closeMobileMenu}
+              >
+                Become a Wizard
               </Link>
               
               <Link
@@ -236,7 +293,7 @@ function Navbar() {
                 }`}
                 onClick={closeMobileMenu}
               >
-                Blog
+                Resources
               </Link>
               
               <Link
@@ -307,10 +364,10 @@ function Navbar() {
                   </Link>
                   <Link
                     to="/signup"
-                    className="block w-full text-center bg-kadam-deep-green hover:bg-kadam-medium-green text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300"
+                    className="block w-full text-center bg-kadam-gold hover:bg-kadam-soft-gold text-kadam-deep-green font-semibold py-3 px-6 rounded-2xl transition-all duration-300"
                     onClick={closeMobileMenu}
                   >
-                    Sign Up
+                    Get Started
                   </Link>
                 </div>
               )}
