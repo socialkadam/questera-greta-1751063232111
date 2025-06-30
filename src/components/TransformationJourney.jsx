@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaArrowRight, FaArrowLeft, FaStar, FaMapMarkerAlt, FaDollarSign, FaVideo, FaPhone, FaComments, FaCalendarAlt, FaCreditCard, FaGem } from 'react-icons/fa';
+import { FaCheckCircle, FaArrowRight, FaArrowLeft, FaStar, FaMapMarkerAlt, FaDollarSign, FaVideo, FaPhone, FaComments, FaCalendarAlt, FaCreditCard, FaGem, FaExternalLinkAlt } from 'react-icons/fa';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 
 function TransformationJourney({ recommendation, onClose, userInput }) {
@@ -10,24 +10,9 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const steps = [
-    {
-      id: 1,
-      name: "Discover & Select",
-      description: "Find & choose your wizard",
-      icon: FaWandMagicSparkles
-    },
-    {
-      id: 2,
-      name: "Schedule & Pay",
-      description: "Book & pay for your session",
-      icon: FaCalendarAlt
-    },
-    {
-      id: 3,
-      name: "Transform & Grow",
-      description: "Celebration & confirmation",
-      icon: FaGem
-    }
+    { id: 1, name: "Discover & Select", description: "Find & choose your wizard", icon: FaWandMagicSparkles },
+    { id: 2, name: "Schedule & Pay", description: "Book & pay for your session", icon: FaCalendarAlt },
+    { id: 3, name: "Transform & Grow", description: "Celebration & confirmation", icon: FaGem }
   ];
 
   const nextStep = () => {
@@ -58,12 +43,20 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
         return <DiscoverSelectStep 
           recommendation={recommendation} 
           userInput={userInput} 
-          onWizardSelect={handleWizardSelect}
+          onWizardSelect={handleWizardSelect} 
         />;
       case 2:
-        return <SchedulePayStep wizard={selectedWizard} onBookingConfirm={handleBookingConfirm} onBack={prevStep} />;
+        return <SchedulePayStep 
+          wizard={selectedWizard} 
+          onBookingConfirm={handleBookingConfirm} 
+          onBack={prevStep} 
+        />;
       case 3:
-        return <TransformGrowStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
+        return <TransformGrowStep 
+          wizard={selectedWizard} 
+          bookingData={bookingData} 
+          onClose={onClose} 
+        />;
       default:
         return null;
     }
@@ -106,7 +99,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
                     {/* Connection Line */}
                     {index < steps.length - 1 && (
                       <div className="absolute top-6 left-12 w-full h-0.5 bg-white/30">
-                        <div
+                        <div 
                           className="h-full bg-kadam-gold transition-all duration-500"
                           style={{ width: isCompleted ? '100%' : '0%' }}
                         />
@@ -169,7 +162,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
 function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
   // Use actual matched wizards from the recommendation
   const wizards = recommendation.matched_wizards || [];
-  
+
   const getAvailabilityIcon = (method) => {
     switch (method) {
       case 'Video Call': return <FaVideo className="text-green-600" />;
@@ -189,7 +182,7 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
         <p className="text-gray-600 text-lg kadam-body mb-6">
           Based on your input: "<em>{userInput}</em>"
         </p>
-        
+
         {/* Match Method Indicator */}
         <div className="mb-6">
           {recommendation.match_method === 'keyword_wizard_lookup' && (
@@ -205,7 +198,7 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
             </div>
           )}
         </div>
-        
+
         {/* Quick AI Summary */}
         <div className="max-w-3xl mx-auto bg-kadam-light-green rounded-2xl p-6 mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -219,7 +212,6 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
               </p>
             </div>
           </div>
-          
           <div className="flex items-center justify-center space-x-6">
             <div className="flex items-center">
               <span className="text-kadam-deep-green font-semibold">Specialization:</span>
@@ -243,9 +235,9 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
           Choose Your Wizard
         </h4>
         <p className="text-gray-600 text-center mb-8 kadam-body">
-          {wizards.length > 0 ? 
-            `Here are your top ${wizards.length} matched ${recommendation.wizard_type}s based on your specific needs` :
-            `Here are recommended ${recommendation.wizard_type}s for your needs`
+          {wizards.length > 0 
+            ? `Here are your top ${wizards.length} matched ${recommendation.wizard_type}s based on your specific needs`
+            : `Here are recommended ${recommendation.wizard_type}s for your needs`
           }
         </p>
 
@@ -264,7 +256,7 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
                     ⭐ BEST MATCH {wizard.matchScore ? `(Score: ${wizard.matchScore})` : ''}
                   </div>
                 )}
-
+                
                 <div className="p-6">
                   <div className="flex items-center space-x-4 mb-4">
                     <img
@@ -363,35 +355,20 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
   );
 }
 
-// Step 2: Schedule & Pay
+// Step 2: Schedule & Pay - Updated with Lapsula Integration
 function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
-  const [sessionType, setSessionType] = useState('video');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isEmbedLoading, setIsEmbedLoading] = useState(true);
 
-  // Mock available times
-  const availableTimes = [
-    '9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM', '4:00 PM'
-  ];
-
-  const handleConfirmBooking = async () => {
-    if (selectedDate && selectedTime) {
-      setIsProcessing(true);
-      
-      // Simulate payment processing
-      setTimeout(() => {
-        setIsProcessing(false);
-        onBookingConfirm({
-          wizard: wizard,
-          date: selectedDate,
-          time: selectedTime,
-          sessionType: sessionType,
-          lapsulaBookingId: `booking_${wizard.lapsulaId || wizard.id}_${Date.now()}`,
-          paymentConfirmed: true
-        });
-      }, 2000);
-    }
+  const handleBookingComplete = () => {
+    // Simulate successful booking
+    onBookingConfirm({
+      wizard: wizard,
+      date: new Date().toLocaleDateString(),
+      time: "Scheduled via Lapsula",
+      sessionType: "As selected in booking",
+      lapsulaBookingId: `lapsula_${wizard.id}_${Date.now()}`,
+      paymentConfirmed: true
+    });
   };
 
   return (
@@ -405,9 +382,10 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
         </p>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left: Wizard Info & Session Type */}
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left: Wizard Info */}
           <div className="bg-kadam-light-green rounded-2xl p-6">
             <div className="flex items-center space-x-4 mb-4">
               <img
@@ -422,169 +400,103 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
               </div>
             </div>
 
-            {/* Session Type Selection */}
-            <div className="mb-6">
-              <h5 className="font-semibold text-kadam-deep-green mb-3">Session Type</h5>
-              <div className="space-y-2">
-                {wizard.availability.map((type) => (
-                  <label key={type} className="flex items-center">
-                    <input
-                      type="radio"
-                      name="sessionType"
-                      value={type.toLowerCase().replace(' ', '')}
-                      checked={sessionType === type.toLowerCase().replace(' ', '')}
-                      onChange={(e) => setSessionType(e.target.value)}
-                      className="mr-3"
-                    />
-                    <span className="capitalize">{type}</span>
-                  </label>
-                ))}
+            <div className="bg-white rounded-xl p-4 mb-6">
+              <h5 className="font-semibold text-kadam-deep-green mb-3">About This Session</h5>
+              <p className="text-gray-600 text-sm mb-3">{wizard.bio}</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Session Duration:</span>
+                  <span className="font-semibold">60 minutes</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Available via:</span>
+                  <span className="font-semibold">{wizard.availability.join(', ')}</span>
+                </div>
               </div>
             </div>
 
-            {/* Booking Summary */}
-            <div className="bg-white rounded-xl p-4 mb-6">
-              <h5 className="font-semibold text-kadam-deep-green mb-3">Booking Summary</h5>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Session:</span>
-                  <span className="font-semibold">{wizard.price}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Platform fee:</span>
-                  <span>$5.00</span>
-                </div>
-                <div className="border-t pt-2 mt-2 flex justify-between font-bold">
-                  <span>Total:</span>
-                  <span>$155.00</span>
-                </div>
-              </div>
+            <div className="text-center">
+              <button
+                onClick={onBack}
+                className="kadam-button-outline inline-flex items-center"
+              >
+                <FaArrowLeft className="mr-2" />
+                Back to Selection
+              </button>
             </div>
           </div>
 
-          {/* Right: Calendar & Payment */}
-          <div className="space-y-6">
-            {/* Calendar */}
-            <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
-              <h5 className="font-semibold text-kadam-deep-green mb-4">Select Date & Time</h5>
+          {/* Right: Lapsula Booking Embed */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
               
-              {/* Mock Calendar */}
-              <div className="mb-6">
-                <div className="grid grid-cols-7 gap-2 mb-4">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="text-center font-semibold text-gray-600 p-2">
-                      {day}
-                    </div>
-                  ))}
+              {/* Embed Header */}
+              <div className="bg-kadam-deep-green p-4 flex items-center justify-between">
+                <div className="flex items-center">
+                  <FaCalendarAlt className="text-kadam-gold mr-3" />
+                  <span className="text-white font-semibold">Secure Booking via Lapsula</span>
                 </div>
-                <div className="grid grid-cols-7 gap-2">
-                  {Array.from({ length: 31 }, (_, i) => i + 1).map(date => (
-                    <button
-                      key={date}
-                      onClick={() => setSelectedDate(date)}
-                      className={`p-2 rounded-lg text-center transition-colors ${
-                        selectedDate === date
-                          ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
-                          : 'hover:bg-gray-100'
-                      }`}
-                    >
-                      {date}
-                    </button>
-                  ))}
+                <div className="flex items-center">
+                  <FaExternalLinkAlt className="text-kadam-gold mr-2" />
+                  <button
+                    onClick={() => window.open(wizard.lapsulaBookingUrl, '_blank')}
+                    className="text-kadam-gold hover:text-white transition-colors text-sm"
+                  >
+                    Open in New Tab
+                  </button>
                 </div>
               </div>
 
-              {/* Available Times */}
-              {selectedDate && (
-                <div>
-                  <h6 className="font-semibold text-kadam-deep-green mb-3">Available Times</h6>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableTimes.map(time => (
-                      <button
-                        key={time}
-                        onClick={() => setSelectedTime(time)}
-                        className={`p-3 rounded-lg text-center transition-colors ${
-                          selectedTime === time
-                            ? 'bg-kadam-gold text-kadam-deep-green font-semibold'
-                            : 'bg-gray-100 hover:bg-gray-200'
-                        }`}
-                      >
-                        {time}
-                      </button>
-                    ))}
+              {/* Loading State */}
+              {isEmbedLoading && (
+                <div className="h-96 flex items-center justify-center bg-gray-50">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-kadam-deep-green mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading booking calendar...</p>
                   </div>
                 </div>
               )}
+
+              {/* Lapsula Booking Embed */}
+              <iframe
+                src={wizard.lapsulaBookingUrl}
+                width="100%"
+                height="600"
+                frameBorder="0"
+                onLoad={() => setIsEmbedLoading(false)}
+                className={isEmbedLoading ? 'hidden' : 'block'}
+                title={`Book session with ${wizard.name}`}
+              />
+
+              {/* Instructions */}
+              <div className="p-4 bg-kadam-light-green border-t">
+                <div className="flex items-center mb-3">
+                  <FaCheckCircle className="text-kadam-deep-green mr-2" />
+                  <span className="font-semibold text-kadam-deep-green">Booking Instructions</span>
+                </div>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>1. Select your preferred date and time</li>
+                  <li>2. Choose your session format (Video, Phone, or Chat)</li>
+                  <li>3. Complete payment securely through Lapsula</li>
+                  <li>4. Receive confirmation email with meeting details</li>
+                </ul>
+              </div>
             </div>
 
-            {/* Payment Form */}
-            {selectedDate && selectedTime && (
-              <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
-                <h5 className="font-semibold text-kadam-deep-green mb-4">Payment Information</h5>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-700 mb-2">Card Number</label>
-                    <input
-                      type="text"
-                      placeholder="**** **** **** 1234"
-                      className="w-full p-3 border border-gray-300 rounded-lg"
-                      disabled={isProcessing}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-gray-700 mb-2">Expiry</label>
-                      <input
-                        type="text"
-                        placeholder="MM/YY"
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                        disabled={isProcessing}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-2">CVV</label>
-                      <input
-                        type="text"
-                        placeholder="123"
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                        disabled={isProcessing}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Continue Button - Simulated for demo */}
+            <div className="text-center mt-6">
+              <button
+                onClick={handleBookingComplete}
+                className="kadam-button text-lg px-8 py-4 inline-flex items-center"
+              >
+                <FaCheckCircle className="mr-3" />
+                I've Completed My Booking
+              </button>
+              <p className="text-gray-500 text-sm mt-2">
+                Click this after you've successfully booked your session
+              </p>
+            </div>
           </div>
-        </div>
-
-        {/* Navigation */}
-        <div className="flex justify-between mt-8">
-          <button
-            onClick={onBack}
-            disabled={isProcessing}
-            className="kadam-button-outline inline-flex items-center disabled:opacity-50"
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Wizard Selection
-          </button>
-
-          <button
-            onClick={handleConfirmBooking}
-            disabled={!selectedDate || !selectedTime || isProcessing}
-            className="kadam-button disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
-          >
-            {isProcessing ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Processing...
-              </>
-            ) : (
-              <>
-                <FaCreditCard className="mr-2" />
-                Confirm & Pay
-              </>
-            )}
-          </button>
         </div>
       </div>
     </div>
@@ -617,28 +529,32 @@ function TransformGrowStep({ wizard, bookingData, onClose }) {
 
           <div className="bg-gradient-to-br from-kadam-light-green to-white rounded-2xl p-8 mb-8">
             <p className="text-xl text-gray-700 mb-6 kadam-body leading-relaxed">
-              You've taken the most important step in your transformation journey - <strong className="text-kadam-deep-green">you chose to act!</strong>
+              You've taken the most important step in your transformation journey - 
+              <strong className="text-kadam-deep-green"> you chose to act!</strong>
             </p>
 
             <div className="bg-white rounded-xl p-6 mb-6 border-2 border-kadam-gold">
               <h4 className="font-semibold text-kadam-deep-green mb-3">Your Session Details</h4>
               <div className="space-y-2 text-left">
                 <p><strong>Wizard:</strong> {wizard.name}</p>
-                <p><strong>Date & Time:</strong> Dec {bookingData.date}, 2024 at {bookingData.time}</p>
-                <p><strong>Session Type:</strong> {bookingData.sessionType}</p>
-                <p><strong>Booking ID:</strong> {bookingData.lapsulaBookingId}</p>
+                <p><strong>Status:</strong> {bookingData.date} at {bookingData.time}</p>
+                <p><strong>Booking Platform:</strong> Lapsula (Secure)</p>
+                <p><strong>Confirmation:</strong> Check your email for details</p>
               </div>
             </div>
 
             <div className="text-lg text-gray-700 kadam-body space-y-4">
               <p>
-                🌟 You've joined thousands of seekers who chose growth over comfort, action over hesitation, and transformation over status quo.
+                🌟 You've joined thousands of seekers who chose growth over comfort, 
+                action over hesitation, and transformation over status quo.
               </p>
               <p>
-                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, and personalized strategies designed specifically for your journey.
+                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, 
+                and personalized strategies designed specifically for your journey.
               </p>
               <p className="bg-kadam-gold/20 p-4 rounded-xl">
-                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. Your journey to unlocking your full human potential starts now!
+                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. 
+                Your journey to unlocking your full human potential starts now!
               </p>
             </div>
           </div>

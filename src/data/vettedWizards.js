@@ -20,7 +20,7 @@ export const vettedWizards = [
       "performance", "goals", "motivation", "professional", "work", "job",
       "advancement", "leadership", "management", "corporate", "stress"
     ],
-    lapsulaId: "sarah-johnson-coach"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/sarah-johnson-coach/embed-020617-facc15"
   },
   {
     id: 'coach_002',
@@ -41,7 +41,7 @@ export const vettedWizards = [
       "diet", "gym", "training", "muscle", "cardio", "strength", "wellness",
       "lifestyle", "habits", "energy", "body", "transform", "lose weight"
     ],
-    lapsulaId: "marcus-chen-coach"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/marcus-chen-fitness/embed-020617-facc15"
   },
   {
     id: 'coach_003',
@@ -62,7 +62,7 @@ export const vettedWizards = [
       "focus", "concentration", "distraction", "procrastination", "planning",
       "scheduling", "priorities", "workflow", "habits", "routine", "discipline"
     ],
-    lapsulaId: "emma-rodriguez-coach"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/emma-rodriguez-productivity/embed-020617-facc15"
   },
   {
     id: 'coach_004',
@@ -83,7 +83,7 @@ export const vettedWizards = [
       "personal growth", "self-improvement", "motivation", "inspiration",
       "confidence", "self-esteem", "happiness", "fulfillment", "balance"
     ],
-    lapsulaId: "david-park-coach"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/david-park-life/embed-020617-facc15"
   },
 
   // CONSULTANTS
@@ -106,7 +106,7 @@ export const vettedWizards = [
       "market analysis", "competition", "business plan", "venture capital",
       "funding", "investment", "entrepreneurship", "company", "operations"
     ],
-    lapsulaId: "lisa-thompson-consultant"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/lisa-thompson-business/embed-020617-facc15"
   },
   {
     id: 'consultant_002',
@@ -127,7 +127,7 @@ export const vettedWizards = [
       "advertising", "campaigns", "brand", "content", "SEO", "analytics",
       "conversion", "leads", "sales", "customers", "acquisition", "retention"
     ],
-    lapsulaId: "robert-kim-consultant"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/robert-kim-marketing/embed-020617-facc15"
   },
   {
     id: 'consultant_003',
@@ -148,7 +148,7 @@ export const vettedWizards = [
       "budget", "saving", "debt", "retirement", "portfolio", "stocks",
       "bonds", "real estate", "financial freedom", "passive income"
     ],
-    lapsulaId: "jennifer-walsh-consultant"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/jennifer-walsh-finance/embed-020617-facc15"
   },
 
   // COUNSELORS
@@ -171,7 +171,7 @@ export const vettedWizards = [
       "intimacy", "trust", "commitment", "dating", "romance", "partnership",
       "family", "divorce", "separation", "therapy", "counseling", "emotional"
     ],
-    lapsulaId: "maria-gonzalez-counselor"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/maria-gonzalez-relationships/embed-020617-facc15"
   },
   {
     id: 'counselor_002',
@@ -192,7 +192,7 @@ export const vettedWizards = [
       "mental health", "therapy", "depression", "mood", "emotional", "psychology",
       "mindfulness", "meditation", "relaxation", "coping", "healing"
     ],
-    lapsulaId: "james-wilson-counselor"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/cmagu7td500007ea0p2x6ciko/embed-020617-facc15"
   },
   {
     id: 'counselor_003',
@@ -213,7 +213,7 @@ export const vettedWizards = [
       "grief", "loss", "emotional", "mental health", "support", "treatment",
       "psychological", "therapeutic", "rehabilitation", "wellness"
     ],
-    lapsulaId: "amanda-foster-counselor"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/amanda-foster-trauma/embed-020617-facc15"
   },
 
   // MENTORS
@@ -236,7 +236,7 @@ export const vettedWizards = [
       "innovation", "technology", "silicon valley", "investment", "funding",
       "scaling", "growth", "leadership", "vision", "strategy", "mentorship"
     ],
-    lapsulaId: "michael-chang-mentor"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/michael-chang-entrepreneurship/embed-020617-facc15"
   },
   {
     id: 'mentor_002',
@@ -257,7 +257,7 @@ export const vettedWizards = [
       "corporate", "strategy", "decision making", "influence", "authority",
       "development", "career", "advancement", "promotion", "success"
     ],
-    lapsulaId: "jennifer-park-mentor"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/jennifer-park-leadership/embed-020617-facc15"
   },
   {
     id: 'mentor_003',
@@ -278,7 +278,7 @@ export const vettedWizards = [
       "mindfulness", "consciousness", "wisdom", "enlightenment", "transformation",
       "journey", "path", "discovery", "authentic", "fulfillment", "potential"
     ],
-    lapsulaId: "thomas-anderson-mentor"
+    lapsulaBookingUrl: "https://app.lapsula.com/shop/thomas-anderson-growth/embed-020617-facc15"
   }
 ];
 
@@ -305,7 +305,7 @@ export class WizardMatchingEngine {
     });
   }
 
-  // Create name index for direct name lookups (NEW)
+  // Create name index for direct name lookups
   setupNameIndex() {
     this.nameIndex = new Map();
     
@@ -330,7 +330,7 @@ export class WizardMatchingEngine {
     });
   }
 
-  // Check if input is likely a name search (NEW)
+  // Check if input is likely a name search
   isNameSearch(userInput) {
     const input = userInput.trim().toLowerCase();
     
@@ -353,7 +353,7 @@ export class WizardMatchingEngine {
     );
   }
 
-  // Search by name first (NEW)
+  // Search by name first
   searchByName(userInput) {
     const input = userInput.toLowerCase().replace(/[^\w\s]/g, '');
     const words = input.split(/\s+/).filter(word => word.length > 1);
@@ -496,7 +496,7 @@ export class WizardMatchingEngine {
     };
   }
 
-  // MAIN SEARCH METHOD - Enhanced with name-first logic (UPDATED)
+  // MAIN SEARCH METHOD - Enhanced with name-first logic
   findTopMatches(userInput, limit = 3) {
     console.log("🔍 Starting enhanced wizard search for:", userInput);
     
