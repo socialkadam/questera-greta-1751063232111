@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaArrowRight, FaArrowLeft, FaStar, FaMapMarkerAlt, FaDollarSign, FaVideo, FaPhone, FaComments, FaCalendarAlt, FaCreditCard, FaGem, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaArrowRight, FaArrowLeft, FaStar, FaMapMarkerAlt, FaDollarSign, FaVideo, FaPhone, FaComments, FaCalendarAlt, FaCreditCard, FaGem } from 'react-icons/fa';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 
 function TransformationJourney({ recommendation, onClose, userInput }) {
@@ -256,7 +256,7 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
                     ⭐ BEST MATCH {wizard.matchScore ? `(Score: ${wizard.matchScore})` : ''}
                   </div>
                 )}
-                
+
                 <div className="p-6">
                   <div className="flex items-center space-x-4 mb-4">
                     <img
@@ -355,7 +355,7 @@ function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
   );
 }
 
-// Step 2: Schedule & Pay - Updated with Lapsula Integration
+// Step 2: Schedule & Pay - Updated with Auto-filled Lapsula Integration
 function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
   const [isEmbedLoading, setIsEmbedLoading] = useState(true);
 
@@ -384,7 +384,6 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
 
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* Left: Wizard Info */}
           <div className="bg-kadam-light-green rounded-2xl p-6">
             <div className="flex items-center space-x-4 mb-4">
@@ -426,30 +425,12 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
             </div>
           </div>
 
-          {/* Right: Lapsula Booking Embed */}
+          {/* Right: Auto-filled Lapsula Booking */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden">
-              
-              {/* Embed Header */}
-              <div className="bg-kadam-deep-green p-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <FaCalendarAlt className="text-kadam-gold mr-3" />
-                  <span className="text-white font-semibold">Secure Booking via Lapsula</span>
-                </div>
-                <div className="flex items-center">
-                  <FaExternalLinkAlt className="text-kadam-gold mr-2" />
-                  <button
-                    onClick={() => window.open(wizard.lapsulaBookingUrl, '_blank')}
-                    className="text-kadam-gold hover:text-white transition-colors text-sm"
-                  >
-                    Open in New Tab
-                  </button>
-                </div>
-              </div>
-
+            <div className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden h-[600px]">
               {/* Loading State */}
               {isEmbedLoading && (
-                <div className="h-96 flex items-center justify-center bg-gray-50">
+                <div className="h-full flex items-center justify-center bg-gray-50">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-kadam-deep-green mx-auto mb-4"></div>
                     <p className="text-gray-600">Loading booking calendar...</p>
@@ -457,7 +438,7 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
                 </div>
               )}
 
-              {/* Lapsula Booking Embed */}
+              {/* Auto-filled Lapsula Booking Embed */}
               <iframe
                 src={wizard.lapsulaBookingUrl}
                 width="100%"
@@ -466,21 +447,8 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
                 onLoad={() => setIsEmbedLoading(false)}
                 className={isEmbedLoading ? 'hidden' : 'block'}
                 title={`Book session with ${wizard.name}`}
+                style={{ border: 'none' }}
               />
-
-              {/* Instructions */}
-              <div className="p-4 bg-kadam-light-green border-t">
-                <div className="flex items-center mb-3">
-                  <FaCheckCircle className="text-kadam-deep-green mr-2" />
-                  <span className="font-semibold text-kadam-deep-green">Booking Instructions</span>
-                </div>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>1. Select your preferred date and time</li>
-                  <li>2. Choose your session format (Video, Phone, or Chat)</li>
-                  <li>3. Complete payment securely through Lapsula</li>
-                  <li>4. Receive confirmation email with meeting details</li>
-                </ul>
-              </div>
             </div>
 
             {/* Continue Button - Simulated for demo */}
@@ -529,8 +497,7 @@ function TransformGrowStep({ wizard, bookingData, onClose }) {
 
           <div className="bg-gradient-to-br from-kadam-light-green to-white rounded-2xl p-8 mb-8">
             <p className="text-xl text-gray-700 mb-6 kadam-body leading-relaxed">
-              You've taken the most important step in your transformation journey - 
-              <strong className="text-kadam-deep-green"> you chose to act!</strong>
+              You've taken the most important step in your transformation journey - <strong className="text-kadam-deep-green">you chose to act!</strong>
             </p>
 
             <div className="bg-white rounded-xl p-6 mb-6 border-2 border-kadam-gold">
@@ -545,16 +512,13 @@ function TransformGrowStep({ wizard, bookingData, onClose }) {
 
             <div className="text-lg text-gray-700 kadam-body space-y-4">
               <p>
-                🌟 You've joined thousands of seekers who chose growth over comfort, 
-                action over hesitation, and transformation over status quo.
+                🌟 You've joined thousands of seekers who chose growth over comfort, action over hesitation, and transformation over status quo.
               </p>
               <p>
-                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, 
-                and personalized strategies designed specifically for your journey.
+                🚀 Your wizard {wizard.name} will guide you with wisdom, expertise, and personalized strategies designed specifically for your journey.
               </p>
               <p className="bg-kadam-gold/20 p-4 rounded-xl">
-                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. 
-                Your journey to unlocking your full human potential starts now!
+                <strong>Remember:</strong> Every master was once a seeker. Every expert was once a beginner. Your journey to unlocking your full human potential starts now!
               </p>
             </div>
           </div>
