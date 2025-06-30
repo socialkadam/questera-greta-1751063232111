@@ -81,7 +81,7 @@ function SignupWizard() {
     setFormData(prev => ({
       ...prev,
       [field]: checked 
-        ? [...prev[field], value] 
+        ? [...prev[field], value]
         : prev[field].filter(item => item !== value)
     }))
   }
@@ -114,6 +114,7 @@ function SignupWizard() {
           return false
         }
         break
+
       case 2:
         if (!formData.wizard_type) {
           setError('Please select your wizard type')
@@ -124,6 +125,7 @@ function SignupWizard() {
           return false
         }
         break
+
       case 3:
         if (!formData.title.trim()) {
           setError('Professional title is required')
@@ -190,7 +192,7 @@ function SignupWizard() {
 
       // Step 2: Create wizard profile
       const wizardData = {
-        id: authData.user.id,
+        full_name: formData.full_name, // Add this for profile creation
         wizard_type: formData.wizard_type,
         specialization: formData.specialization,
         title: formData.title,
@@ -240,6 +242,8 @@ function SignupWizard() {
         setError('Please enter a valid email address.')
       } else if (err.message?.includes('Password')) {
         setError('Password must be at least 6 characters long.')
+      } else if (err.message?.includes('violates row-level security')) {
+        setError('There was a security issue creating your profile. Please try again or contact support.')
       } else {
         setError(err.message || 'Failed to create wizard account. Please try again.')
       }
@@ -259,9 +263,9 @@ function SignupWizard() {
         >
           <div className="kadam-card-elevated p-12 text-center">
             <div className="mb-6">
-              <img 
-                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
-                alt="Wizardoo Logo" 
+              <img
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png"
+                alt="Wizardoo Logo"
                 className="h-12 w-auto mx-auto mb-6"
               />
             </div>
@@ -300,7 +304,7 @@ function SignupWizard() {
                 <h2 className="kadam-heading text-3xl mb-4">Create Your Account</h2>
                 <p className="text-gray-600 kadam-body">Let's start with your basic information</p>
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 kadam-body-medium mb-3 text-lg">Full Name *</label>
                 <div className="relative">
@@ -579,12 +583,13 @@ function SignupWizard() {
             {/* Logo and Progress Bar */}
             <div className="mb-12">
               <div className="text-center mb-8">
-                <img 
-                  src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
-                  alt="Wizardoo Logo" 
+                <img
+                  src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png"
+                  alt="Wizardoo Logo"
                   className="h-12 w-auto mx-auto"
                 />
               </div>
+
               <div className="flex items-center justify-between mb-6">
                 <span className="kadam-body-medium text-kadam-deep-green text-lg">
                   Step {currentStep} of 3
@@ -593,6 +598,7 @@ function SignupWizard() {
                   {Math.round((currentStep / 3) * 100)}% Complete
                 </span>
               </div>
+
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-kadam-gold h-3 rounded-full transition-all duration-500"
@@ -634,7 +640,7 @@ function SignupWizard() {
                     </button>
                   )}
                 </div>
-                
+
                 <div>
                   {currentStep < 3 ? (
                     <button
@@ -673,13 +679,19 @@ function SignupWizard() {
             <div className="mt-12 text-center">
               <p className="text-gray-600 kadam-body">
                 Already have an account?{' '}
-                <Link to="/login" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
+                <Link
+                  to="/login"
+                  className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green"
+                >
                   Sign in here
                 </Link>
               </p>
               <p className="text-gray-600 mt-2 kadam-body">
                 Want to be a seeker instead?{' '}
-                <Link to="/signup" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
+                <Link
+                  to="/signup"
+                  className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green"
+                >
                   Sign up as seeker
                 </Link>
               </p>
@@ -687,7 +699,6 @@ function SignupWizard() {
           </div>
         </motion.div>
       </div>
-      
       <ScrollToTop />
     </div>
   )

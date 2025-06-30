@@ -120,9 +120,66 @@ export const wizardHelpers = {
     try {
       console.log('🔄 Creating wizard profile:', wizardData)
       
+      // First, ensure the user has a profile
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        throw new Error('No authenticated user found')
+      }
+
+      // Check if profile exists, if not create it
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (!existingProfile) {
+        console.log('📝 Creating missing profile first...')
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            full_name: wizardData.full_name || user.user_metadata?.full_name || '',
+            email: user.email,
+            role: 'wizard'
+          })
+
+        if (profileError) {
+          console.error('❌ Profile creation error:', profileError)
+          throw profileError
+        }
+      } else if (existingProfile.role !== 'wizard') {
+        // Update existing profile to wizard role
+        console.log('🔄 Updating profile role to wizard...')
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ role: 'wizard' })
+          .eq('id', user.id)
+
+        if (updateError) {
+          console.error('❌ Profile update error:', updateError)
+          throw updateError
+        }
+      }
+
+      // Now create the wizard profile
       const { data, error } = await supabase
         .from('wizards')
-        .insert(wizardData)
+        .insert({
+          id: user.id,
+          wizard_type: wizardData.wizard_type,
+          specialization: wizardData.specialization,
+          title: wizardData.title,
+          experience_years: wizardData.experience_years,
+          hourly_rate: wizardData.hourly_rate,
+          bio_detailed: wizardData.bio_detailed,
+          why_wizard: wizardData.why_wizard,
+          certifications: wizardData.certifications || [],
+          education: wizardData.education,
+          languages: wizardData.languages || ['English'],
+          session_types: wizardData.session_types || ['video'],
+          status: 'pending'
+        })
         .select()
         .single()
 
