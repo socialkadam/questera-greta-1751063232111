@@ -181,6 +181,7 @@ function SignupWizard() {
       )
 
       if (authError) {
+        console.error('❌ Auth error:', authError)
         throw authError
       }
 
@@ -192,7 +193,7 @@ function SignupWizard() {
 
       // Step 2: Create wizard profile
       const wizardData = {
-        full_name: formData.full_name, // Add this for profile creation
+        full_name: formData.full_name,
         wizard_type: formData.wizard_type,
         specialization: formData.specialization,
         title: formData.title,
@@ -204,16 +205,17 @@ function SignupWizard() {
         education: formData.education || null,
         languages: formData.languages.split(',').map(l => l.trim()),
         session_types: formData.session_types,
-        status: 'pending' // Awaiting admin approval
+        status: 'pending'
       }
 
-      const { error: wizardError } = await wizardHelpers.createWizardProfile(wizardData)
+      const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(wizardData)
 
       if (wizardError) {
+        console.error('❌ Wizard creation error:', wizardError)
         throw wizardError
       }
 
-      console.log('✅ Wizard profile created successfully')
+      console.log('✅ Wizard profile created successfully:', wizardResult)
 
       // Show success and auto-login
       setSuccess(true)
@@ -236,14 +238,16 @@ function SignupWizard() {
       console.error('❌ Wizard signup failed:', err)
       
       // Handle specific errors
-      if (err.message?.includes('already registered')) {
+      if (err.message?.includes('already registered') || err.message?.includes('already been registered')) {
         setError('An account with this email already exists. Please sign in instead.')
       } else if (err.message?.includes('Invalid email')) {
         setError('Please enter a valid email address.')
       } else if (err.message?.includes('Password')) {
         setError('Password must be at least 6 characters long.')
-      } else if (err.message?.includes('violates row-level security')) {
+      } else if (err.message?.includes('row-level security') || err.message?.includes('RLS')) {
         setError('There was a security issue creating your profile. Please try again or contact support.')
+      } else if (err.message?.includes('Database error')) {
+        setError('Database error saving new user. Please try again.')
       } else {
         setError(err.message || 'Failed to create wizard account. Please try again.')
       }
