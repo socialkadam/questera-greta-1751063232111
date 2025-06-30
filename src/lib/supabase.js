@@ -25,7 +25,6 @@ export const authHelpers = {
   async signUp(email, password, userData = {}) {
     try {
       console.log('🔄 Creating account for:', email)
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -38,10 +37,8 @@ export const authHelpers = {
       })
 
       if (error) throw error
-      
       console.log('✅ Account created successfully')
       return { data, error: null }
-      
     } catch (error) {
       console.error('❌ Signup error:', error)
       return { data: null, error }
@@ -55,10 +52,8 @@ export const authHelpers = {
         email,
         password
       })
-      
       if (error) throw error
       return { data, error: null }
-      
     } catch (error) {
       return { data: null, error }
     }
@@ -89,13 +84,48 @@ export const authHelpers = {
   }
 }
 
-// Wizard helpers
+// 🔥 ENHANCED Wizard helpers with better error handling
 export const wizardHelpers = {
-  // Create wizard profile
+  // Create wizard profile with enhanced debugging
   async createWizardProfile(wizardData, userId) {
     try {
       console.log('🧙‍♂️ Creating wizard profile for user:', userId)
-      
+      console.log('📋 Wizard data:', wizardData)
+
+      // First, let's check if we can access the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
+        throw new Error('No authenticated user found: ' + (userError?.message || 'Unknown error'))
+      }
+      console.log('✅ Authenticated user verified:', user.id)
+
+      // Check if profile exists
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (profileError || !profile) {
+        console.log('⚠️ Profile check failed:', profileError?.message)
+        throw new Error('Profile not found. Please try again.')
+      }
+      console.log('✅ Profile verified:', profile.id, profile.role)
+
+      // Debug RLS permissions (if function exists)
+      try {
+        const { data: debugInfo } = await supabase
+          .rpc('debug_wizard_creation', { user_id: userId })
+          .single()
+        
+        if (debugInfo) {
+          console.log('🔍 RLS Debug Info:', debugInfo)
+        }
+      } catch (debugError) {
+        console.log('⚠️ Debug function not available:', debugError.message)
+      }
+
+      // Create wizard profile with enhanced error handling
       const { data, error } = await supabase
         .from('wizards')
         .insert({
@@ -116,13 +146,40 @@ export const wizardHelpers = {
         .select()
         .single()
 
-      if (error) throw error
-      
+      if (error) {
+        console.error('❌ Wizard creation error details:', error)
+        
+        // Provide specific error messages based on error type
+        if (error.message?.includes('row-level security')) {
+          throw new Error('Permission denied: Unable to create wizard profile. Please ensure you are properly authenticated.')
+        } else if (error.message?.includes('duplicate key')) {
+          throw new Error('A wizard profile already exists for this account.')
+        } else if (error.message?.includes('foreign key')) {
+          throw new Error('User profile not found. Please try signing up again.')
+        } else {
+          throw new Error('Failed to create wizard profile: ' + error.message)
+        }
+      }
+
       console.log('✅ Wizard profile created successfully')
       return { data, error: null }
-      
     } catch (error) {
       console.error('❌ Wizard creation error:', error)
+      return { data: null, error }
+    }
+  },
+
+  // Get wizard profile
+  async getWizardProfile(userId) {
+    try {
+      const { data, error } = await supabase
+        .from('wizards')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      return { data, error }
+    } catch (error) {
       return { data: null, error }
     }
   }
