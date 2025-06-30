@@ -61,19 +61,19 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
   const steps = [
     {
       id: 1,
-      name: "Discover",
+      name: "Discover & Select",
       description: "Find & choose your wizard",
       icon: FaWandMagicSparkles
     },
     {
       id: 2,
-      name: "Schedule",
+      name: "Schedule & Pay",
       description: "Book & pay for your session",
       icon: FaCalendarAlt
     },
     {
       id: 3,
-      name: "Transform",
+      name: "Transform & Grow",
       description: "Celebration & confirmation",
       icon: FaGem
     }
@@ -104,16 +104,16 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <DiscoverStep 
+        return <DiscoverSelectStep 
           recommendation={recommendation} 
           userInput={userInput} 
           wizards={mockWizards}
           onWizardSelect={handleWizardSelect}
         />;
       case 2:
-        return <ScheduleStep wizard={selectedWizard} onBookingConfirm={handleBookingConfirm} onBack={prevStep} />;
+        return <SchedulePayStep wizard={selectedWizard} onBookingConfirm={handleBookingConfirm} onBack={prevStep} />;
       case 3:
-        return <TransformStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
+        return <TransformGrowStep wizard={selectedWizard} bookingData={bookingData} onClose={onClose} />;
       default:
         return null;
     }
@@ -143,7 +143,7 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
             </button>
           </div>
 
-          {/* Progress Bar - Now 3 Steps */}
+          {/* Progress Bar - 3 Steps */}
           <div className="relative">
             <div className="flex items-center justify-between">
               {steps.map((step, index) => {
@@ -215,8 +215,8 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
   );
 }
 
-// Step 1: Discover & Choose (Combined)
-function DiscoverStep({ recommendation, userInput, wizards, onWizardSelect }) {
+// Step 1: Discover & Select
+function DiscoverSelectStep({ recommendation, userInput, wizards, onWizardSelect }) {
   const getAvailabilityIcon = (method) => {
     switch (method) {
       case 'Video Call': return <FaVideo className="text-green-600" />;
@@ -360,8 +360,8 @@ function DiscoverStep({ recommendation, userInput, wizards, onWizardSelect }) {
   );
 }
 
-// Step 2: Schedule & Payment (Same as before)
-function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
+// Step 2: Schedule & Pay
+function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [sessionType, setSessionType] = useState('video');
@@ -588,8 +588,8 @@ function ScheduleStep({ wizard, onBookingConfirm, onBack }) {
   );
 }
 
-// Step 3: Transform (Same as before)
-function TransformStep({ wizard, bookingData, onClose }) {
+// Step 3: Transform & Grow
+function TransformGrowStep({ wizard, bookingData, onClose }) {
   return (
     <div className="p-8 text-center">
       <motion.div

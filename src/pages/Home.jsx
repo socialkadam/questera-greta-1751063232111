@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { FaSearch, FaArrowRight, FaUserTie, FaBrain, FaHeart, FaLightbulb, FaSpinner } from 'react-icons/fa'
 import { getWizardRecommendation, getWizardDetailsByType } from '../api/gptMatch'
-import WizardRecommendation from '../components/WizardRecommendation'
+import TransformationJourney from '../components/TransformationJourney'
 import ScrollToTop from '../components/ScrollToTop'
 
 const wizardTypes = [
@@ -43,8 +43,8 @@ const wizardTypes = [
 
 function Home() {
   const [searchInput, setSearchInput] = useState('')
-  const [gptRecommendation, setGptRecommendation] = useState(null)
-  const [showGptResult, setShowGptResult] = useState(false)
+  const [showTransformationJourney, setShowTransformationJourney] = useState(false)
+  const [recommendation, setRecommendation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -66,23 +66,17 @@ function Home() {
         const wizardDetails = getWizardDetailsByType(result.wizard_type)
         console.log("🧙 Wizard details:", wizardDetails)
 
-        const recommendation = {
+        const finalRecommendation = {
           ...result,
           wizard: wizardDetails,
           userInput: searchInput // Pass original input for personalization
         }
 
-        console.log("🎯 Final recommendation:", recommendation)
-        setGptRecommendation(recommendation)
-        setShowGptResult(true)
-
-        // Scroll to results
-        setTimeout(() => {
-          const element = document.getElementById('gpt-results')
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          }
-        }, 300)
+        console.log("🎯 Final recommendation:", finalRecommendation)
+        setRecommendation(finalRecommendation)
+        
+        // Show Transformation Journey immediately
+        setShowTransformationJourney(true)
       } else {
         console.error("❌ Invalid result from getWizardRecommendation:", result)
         setError("We couldn't process your request. Please try a different goal or browse our wizard types below.")
@@ -95,10 +89,10 @@ function Home() {
     }
   }
 
-  const closeGptResult = () => {
-    console.log("🚫 Closing GPT result")
-    setShowGptResult(false)
-    setGptRecommendation(null)
+  const closeTransformationJourney = () => {
+    console.log("🚫 Closing Transformation Journey")
+    setShowTransformationJourney(false)
+    setRecommendation(null)
     setError(null)
   }
 
@@ -123,7 +117,7 @@ function Home() {
         style={{ backgroundColor: '#013d39' }}
       >
         <div className="max-w-4xl w-full text-center">
-          {/* Main Heading - Updated */}
+          {/* Main Heading */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -144,7 +138,7 @@ function Home() {
           >
             <div className="relative max-w-xl mx-auto px-4">
               <div className="flex items-center bg-white border border-gray-300 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 focus-within:shadow-xl">
-                {/* Input Field - Updated placeholder */}
+                {/* Input Field */}
                 <input
                   type="text"
                   placeholder="e.g., 'I keep procrastinating and feel burned out at work'"
@@ -153,7 +147,6 @@ function Home() {
                   className="flex-1 py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base lg:text-lg focus:outline-none bg-transparent rounded-full"
                   disabled={isLoading}
                 />
-
                 {/* Submit Button */}
                 <button
                   type="submit"
@@ -230,27 +223,11 @@ function Home() {
         </div>
       </div>
 
-      {/* GPT Recommendation Results */}
-      <AnimatePresence>
-        {showGptResult && gptRecommendation && (
-          <div id="gpt-results" className="bg-kadam-light-green py-12 sm:py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
-              <WizardRecommendation
-                recommendation={gptRecommendation}
-                onClose={closeGptResult}
-                userInput={searchInput}
-              />
-            </div>
-          </div>
-        )}
-      </AnimatePresence>
-
       {/* Wizard Types Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-20 bg-kadam-off-white">
         <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-center mb-8 sm:mb-16">
           Choose Your Wizard Type
         </h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {wizardTypes.map((wizard) => (
             <motion.div
@@ -291,7 +268,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Call to Action - Updated text */}
+      {/* Call to Action */}
       <div className="bg-kadam-deep-green py-12 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="kadam-heading text-2xl sm:text-3xl lg:text-4xl xl:text-5xl mb-6 sm:mb-8 text-white">
@@ -308,6 +285,15 @@ function Home() {
           </button>
         </div>
       </div>
+
+      {/* Transformation Journey Modal - Shows immediately after search */}
+      {showTransformationJourney && recommendation && (
+        <TransformationJourney
+          recommendation={recommendation}
+          userInput={searchInput}
+          onClose={closeTransformationJourney}
+        />
+      )}
 
       {/* Scroll to Top Component */}
       <ScrollToTop />
