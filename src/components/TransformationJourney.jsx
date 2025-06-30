@@ -3,55 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheckCircle, FaArrowRight, FaArrowLeft, FaStar, FaMapMarkerAlt, FaDollarSign, FaVideo, FaPhone, FaComments, FaCalendarAlt, FaCreditCard, FaGem } from 'react-icons/fa';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 
-// Mock wizard data for demonstration
-const mockWizards = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    title: "Senior Career Performance Coach",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-    rating: 4.9,
-    reviews: 127,
-    experience: "8 years",
-    location: "San Francisco, CA",
-    price: "$150/session",
-    specialization: "career",
-    bio: "Specialized in helping professionals overcome procrastination and workplace burnout.",
-    availability: ["Video Call", "Phone", "Chat"],
-    lapsulaId: "sarah-johnson-coach"
-  },
-  {
-    id: 2,
-    name: "Marcus Chen",
-    title: "Certified Fitness & Wellness Coach",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-    rating: 4.8,
-    reviews: 203,
-    experience: "6 years",
-    location: "Los Angeles, CA",
-    price: "$120/session",
-    specialization: "fitness",
-    bio: "Expert in sustainable fitness transformations and healthy lifestyle design.",
-    availability: ["Video Call", "Phone"],
-    lapsulaId: "marcus-chen-coach"
-  },
-  {
-    id: 3,
-    name: "Emma Rodriguez",
-    title: "Productivity & Time Management Coach",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80",
-    rating: 4.9,
-    reviews: 89,
-    experience: "5 years",
-    location: "New York, NY",
-    price: "$130/session",
-    specialization: "productivity",
-    bio: "Helps busy professionals create efficient systems and overcome procrastination.",
-    availability: ["Video Call", "Chat"],
-    lapsulaId: "emma-rodriguez-coach"
-  }
-];
-
 function TransformationJourney({ recommendation, onClose, userInput }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedWizard, setSelectedWizard] = useState(null);
@@ -107,7 +58,6 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
         return <DiscoverSelectStep 
           recommendation={recommendation} 
           userInput={userInput} 
-          wizards={mockWizards}
           onWizardSelect={handleWizardSelect}
         />;
       case 2:
@@ -216,7 +166,10 @@ function TransformationJourney({ recommendation, onClose, userInput }) {
 }
 
 // Step 1: Discover & Select
-function DiscoverSelectStep({ recommendation, userInput, wizards, onWizardSelect }) {
+function DiscoverSelectStep({ recommendation, userInput, onWizardSelect }) {
+  // Use actual matched wizards from the recommendation
+  const wizards = recommendation.matched_wizards || [];
+  
   const getAvailabilityIcon = (method) => {
     switch (method) {
       case 'Video Call': return <FaVideo className="text-green-600" />;
@@ -237,10 +190,26 @@ function DiscoverSelectStep({ recommendation, userInput, wizards, onWizardSelect
           Based on your input: "<em>{userInput}</em>"
         </p>
         
+        {/* Match Method Indicator */}
+        <div className="mb-6">
+          {recommendation.match_method === 'keyword_wizard_lookup' && (
+            <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold">
+              <FaCheckCircle className="mr-2" />
+              Matched with real vetted wizards
+            </div>
+          )}
+          {recommendation.fallback && (
+            <div className="inline-flex items-center bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-semibold">
+              <FaWandMagicSparkles className="mr-2" />
+              AI-powered recommendation
+            </div>
+          )}
+        </div>
+        
         {/* Quick AI Summary */}
         <div className="max-w-3xl mx-auto bg-kadam-light-green rounded-2xl p-6 mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="text-4xl mr-4">{recommendation.wizard.icon}</div>
+            <div className="text-4xl mr-4">{recommendation.wizard?.icon || '🧙‍♂️'}</div>
             <div>
               <h4 className="text-xl font-bold text-kadam-deep-green kadam-heading">
                 {recommendation.wizard_type.charAt(0).toUpperCase() + recommendation.wizard_type.slice(1)} Recommended
@@ -274,76 +243,105 @@ function DiscoverSelectStep({ recommendation, userInput, wizards, onWizardSelect
           Choose Your Wizard
         </h4>
         <p className="text-gray-600 text-center mb-8 kadam-body">
-          Here are your top 3 recommended {recommendation.wizard_type}s based on your needs
+          {wizards.length > 0 ? 
+            `Here are your top ${wizards.length} matched ${recommendation.wizard_type}s based on your specific needs` :
+            `Here are recommended ${recommendation.wizard_type}s for your needs`
+          }
         </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {wizards.map((wizard, index) => (
-            <motion.div
-              key={wizard.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden hover:border-kadam-gold hover:shadow-xl transition-all duration-300"
+        {wizards.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {wizards.slice(0, 3).map((wizard, index) => (
+              <motion.div
+                key={wizard.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden hover:border-kadam-gold hover:shadow-xl transition-all duration-300"
+              >
+                {index === 0 && wizard.matchScore > 15 && (
+                  <div className="bg-kadam-gold text-kadam-deep-green px-4 py-2 text-center font-semibold text-sm">
+                    ⭐ BEST MATCH {wizard.matchScore ? `(Score: ${wizard.matchScore})` : ''}
+                  </div>
+                )}
+
+                <div className="p-6">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <img
+                      src={wizard.image}
+                      alt={wizard.name}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-kadam-gold shadow-md"
+                    />
+                    <div>
+                      <h4 className="font-bold text-lg text-gray-800">{wizard.name}</h4>
+                      <p className="text-gray-600 text-sm">{wizard.title}</p>
+                      <div className="flex items-center mt-1">
+                        <FaStar className="text-yellow-400 text-sm mr-1" />
+                        <span className="text-sm font-semibold text-gray-700">{wizard.rating}</span>
+                        <span className="text-sm text-gray-500 ml-1">({wizard.reviews})</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">{wizard.bio}</p>
+
+                  {/* Show matched keywords if available */}
+                  {wizard.matchedKeywords && wizard.matchedKeywords.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-green-600 font-semibold mb-2">Matched your keywords:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {wizard.matchedKeywords.slice(0, 4).map((keyword, idx) => (
+                          <span key={idx} className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <FaMapMarkerAlt className="mr-2 text-gray-400" />
+                      <span>{wizard.location}</span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <FaDollarSign className="mr-2 text-gray-400" />
+                      <span className="font-semibold text-gray-800">{wizard.price}</span>
+                      <span className="ml-2">• {wizard.experience}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 mb-4">
+                    <span className="text-sm text-gray-500">Available via:</span>
+                    {wizard.availability.map((method, idx) => (
+                      <div key={idx} className="flex items-center space-x-1">
+                        {getAvailabilityIcon(method)}
+                        <span className="text-xs text-gray-600">{method}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => onWizardSelect(wizard)}
+                    className="w-full bg-gradient-to-r from-kadam-deep-green to-kadam-medium-green hover:from-kadam-medium-green hover:to-kadam-deep-green text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                  >
+                    Select {wizard.name}
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-600 mb-4">No specific wizard matches found, but we can still help you!</p>
+            <button
+              onClick={() => window.location.href = `/wizards?type=${recommendation.wizard_type}`}
+              className="kadam-button"
             >
-              {index === 0 && (
-                <div className="bg-kadam-gold text-kadam-deep-green px-4 py-2 text-center font-semibold text-sm">
-                  ⭐ TOP RECOMMENDED
-                </div>
-              )}
-
-              <div className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <img
-                    src={wizard.image}
-                    alt={wizard.name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-kadam-gold shadow-md"
-                  />
-                  <div>
-                    <h4 className="font-bold text-lg text-gray-800">{wizard.name}</h4>
-                    <p className="text-gray-600 text-sm">{wizard.title}</p>
-                    <div className="flex items-center mt-1">
-                      <FaStar className="text-yellow-400 text-sm mr-1" />
-                      <span className="text-sm font-semibold text-gray-700">{wizard.rating}</span>
-                      <span className="text-sm text-gray-500 ml-1">({wizard.reviews})</span>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">{wizard.bio}</p>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FaMapMarkerAlt className="mr-2 text-gray-400" />
-                    <span>{wizard.location}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FaDollarSign className="mr-2 text-gray-400" />
-                    <span className="font-semibold text-gray-800">{wizard.price}</span>
-                    <span className="ml-2">• {wizard.experience}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 mb-4">
-                  <span className="text-sm text-gray-500">Available via:</span>
-                  {wizard.availability.map((method, idx) => (
-                    <div key={idx} className="flex items-center space-x-1">
-                      {getAvailabilityIcon(method)}
-                      <span className="text-xs text-gray-600">{method}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => onWizardSelect(wizard)}
-                  className="w-full bg-gradient-to-r from-kadam-deep-green to-kadam-medium-green hover:from-kadam-medium-green hover:to-kadam-deep-green text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  Select This Wizard
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              Browse All {recommendation.wizard_type}s
+            </button>
+          </div>
+        )}
       </div>
 
       {/* AI Explanation */}
@@ -355,6 +353,11 @@ function DiscoverSelectStep({ recommendation, userInput, wizards, onWizardSelect
         <p className="text-gray-700 kadam-body leading-relaxed">
           {recommendation.personalized_explanation}
         </p>
+        {recommendation.match_method === 'keyword_wizard_lookup' && (
+          <p className="text-green-600 text-sm mt-3 font-medium">
+            ✅ These wizards were selected based on direct keyword matching with your specific needs.
+          </p>
+        )}
       </div>
     </div>
   );
@@ -384,7 +387,7 @@ function SchedulePayStep({ wizard, onBookingConfirm, onBack }) {
           date: selectedDate,
           time: selectedTime,
           sessionType: sessionType,
-          lapsulaBookingId: `booking_${wizard.lapsulaId}_${Date.now()}`,
+          lapsulaBookingId: `booking_${wizard.lapsulaId || wizard.id}_${Date.now()}`,
           paymentConfirmed: true
         });
       }, 2000);
