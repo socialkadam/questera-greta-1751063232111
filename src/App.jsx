@@ -15,6 +15,9 @@ import Signup from './pages/Signup'
 import SignupWizard from './pages/SignupWizard'
 import WizardPendingApproval from './pages/WizardPendingApproval'
 import Profile from './pages/Profile'
+import SeekerOnboarding from './pages/SeekerOnboarding'
+import WizardVetting from './pages/WizardVetting'
+import Academy from './pages/Academy'
 
 function App() {
   return (
@@ -37,6 +40,9 @@ function App() {
               <Route path="/signup-wizard" element={<SignupWizard />} />
               <Route path="/wizard-pending-approval" element={<WizardPendingApproval />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/seeker-onboarding" element={<SeekerOnboarding />} />
+              <Route path="/wizard-vetting" element={<WizardVetting />} />
+              <Route path="/academy" element={<Academy />} />
             </Routes>
           </main>
           <Footer />
