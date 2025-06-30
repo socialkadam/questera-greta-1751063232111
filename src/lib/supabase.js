@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Supabase project credentials
+// Supabase project credentials - using verified working credentials
 const SUPABASE_URL = 'https://fuhzrjphwzbvbgiuoknt.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1aHpyanBod3pidmJnaXVva250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTExMzkzNzAsImV4cCI6MjA2NjcxNTM3MH0.9ZLThaYx1taPoA07CxMarXvBobPu3iAsAj15b-uEZp0'
+
+// Test connection on module load
+console.log('🔗 Supabase URL:', SUPABASE_URL)
+console.log('🔑 Supabase Key (first 20 chars):', SUPABASE_ANON_KEY.substring(0, 20) + '...')
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -12,14 +16,20 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   }
 })
 
+// Test connection immediately
+supabase.from('profiles').select('count').limit(1)
+  .then(() => console.log('✅ Supabase connection successful'))
+  .catch(err => console.error('❌ Supabase connection failed:', err))
+
 // Helper functions for auth and data operations
 export const authHelpers = {
-  // Sign up with role
+  // Sign up with role - Enhanced with debugging
   async signUp(email, password, userData = {}) {
     try {
       console.log('🔄 Starting signup process for:', email)
       console.log('📝 User data:', userData)
       
+      // Step 1: Create user in Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -33,47 +43,51 @@ export const authHelpers = {
       })
 
       if (error) {
-        console.error('❌ Signup error:', error)
+        console.error('❌ Auth signup error:', error)
         throw error
       }
 
-      console.log('✅ Signup successful:', data)
+      if (!data.user) {
+        throw new Error('No user returned from signup')
+      }
 
-      // Wait a moment for the trigger to complete
-      if (data.user) {
-        console.log('⏳ Waiting for profile creation...')
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Verify profile was created
-        const { data: profile, error: profileError } = await supabase
+      console.log('✅ Auth signup successful:', data.user.id)
+
+      // Step 2: Wait for trigger to create profile (or create manually)
+      console.log('⏳ Waiting for profile creation...')
+      await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds
+
+      // Step 3: Check if profile was created by trigger
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single()
+
+      if (profileError && profileError.code === 'PGRST116') {
+        // Profile doesn't exist, create it manually
+        console.log('📝 Creating profile manually...')
+        const { data: newProfile, error: insertError } = await supabase
           .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
+          .insert({
+            id: data.user.id,
+            full_name: userData.full_name || '',
+            email: data.user.email,
+            role: userData.role || 'seeker'
+          })
+          .select()
           .single()
 
-        if (profileError && profileError.code === 'PGRST116') {
-          // Profile doesn't exist, create it manually
-          console.log('📝 Creating profile manually...')
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              id: data.user.id,
-              full_name: userData.full_name || '',
-              email: data.user.email,
-              role: userData.role || 'seeker'
-            })
-
-          if (insertError) {
-            console.error('❌ Manual profile creation error:', insertError)
-            throw new Error(`Failed to create user profile: ${insertError.message}`)
-          }
-          console.log('✅ Profile created manually')
-        } else if (profileError) {
-          console.error('❌ Profile check error:', profileError)
-          throw new Error(`Database error: ${profileError.message}`)
-        } else {
-          console.log('✅ Profile exists:', profile)
+        if (insertError) {
+          console.error('❌ Manual profile creation error:', insertError)
+          throw new Error(`Failed to create user profile: ${insertError.message}`)
         }
+        console.log('✅ Profile created manually:', newProfile)
+      } else if (profileError) {
+        console.error('❌ Profile check error:', profileError)
+        throw new Error(`Database error: ${profileError.message}`)
+      } else {
+        console.log('✅ Profile exists (created by trigger):', profile)
       }
 
       return { data, error: null }
@@ -83,7 +97,7 @@ export const authHelpers = {
     }
   },
 
-  // Sign in
+  // Sign in with debugging
   async signIn(email, password) {
     try {
       console.log('🔄 Starting signin process for:', email)
@@ -98,7 +112,7 @@ export const authHelpers = {
         throw error
       }
 
-      console.log('✅ Signin successful:', data)
+      console.log('✅ Signin successful:', data.user?.id)
       return { data, error: null }
     } catch (error) {
       console.error('❌ Signin exception:', error)
@@ -154,7 +168,7 @@ export const authHelpers = {
 
 // Wizard-specific operations
 export const wizardHelpers = {
-  // Create wizard profile
+  // Create wizard profile with enhanced debugging
   async createWizardProfile(wizardData) {
     try {
       console.log('🔄 Creating wizard profile:', wizardData)
@@ -176,7 +190,7 @@ export const wizardHelpers = {
 
       if (profileCheckError && profileCheckError.code === 'PGRST116') {
         // Profile doesn't exist, create it
-        console.log('📝 Creating missing profile...')
+        console.log('📝 Creating missing profile for wizard...')
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({

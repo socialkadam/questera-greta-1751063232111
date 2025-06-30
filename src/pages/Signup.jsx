@@ -13,12 +13,19 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [debugInfo, setDebugInfo] = useState([])
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     password: '',
     confirmPassword: ''
   })
+
+  const addDebugInfo = (message) => {
+    const timestamp = new Date().toLocaleTimeString()
+    setDebugInfo(prev => [...prev, `[${timestamp}] ${message}`])
+    console.log(`[DEBUG] ${message}`)
+  }
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -66,11 +73,13 @@ function Signup() {
     setLoading(true)
     setError('')
     setSuccess(false)
+    setDebugInfo([])
 
     try {
-      console.log('🚀 Starting seeker signup process...')
+      addDebugInfo('🚀 Starting seeker signup process...')
 
       // Sign up the user
+      addDebugInfo('📧 Creating user account with email: ' + formData.email)
       const { data, error: signupError } = await authHelpers.signUp(
         formData.email,
         formData.password,
@@ -81,6 +90,7 @@ function Signup() {
       )
 
       if (signupError) {
+        addDebugInfo('❌ Signup error: ' + signupError.message)
         throw signupError
       }
 
@@ -88,12 +98,12 @@ function Signup() {
         throw new Error('Failed to create account. Please try again.')
       }
 
-      console.log('✅ Seeker signup successful!')
+      addDebugInfo('✅ Seeker signup successful! User ID: ' + data.user.id)
 
       // Show success message
       setSuccess(true)
 
-      // Auto-login the user
+      // Auto-login the user if account was created
       if (data.user) {
         login({
           id: data.user.id,
@@ -103,6 +113,8 @@ function Signup() {
           isVerified: data.user.email_confirmed_at ? true : false
         })
 
+        addDebugInfo('🎉 Auto-login successful!')
+
         // Redirect after short delay to show success
         setTimeout(() => {
           navigate('/', { replace: true })
@@ -110,8 +122,9 @@ function Signup() {
       }
 
     } catch (err) {
+      addDebugInfo('❌ Signup failed: ' + err.message)
       console.error('❌ Signup failed:', err)
-
+      
       // Handle specific Supabase errors
       if (err.message?.includes('already registered')) {
         setError('An account with this email already exists. Please sign in instead.')
@@ -169,9 +182,9 @@ function Signup() {
           {/* Logo and Header */}
           <div className="text-center mb-8">
             <div className="mb-6">
-              <img 
-                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png" 
-                alt="Wizardoo Logo" 
+              <img
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1751289647670-WIZARDOO%20%28GRETA%20LOGO%29%20%281%29.png"
+                alt="Wizardoo Logo"
                 className="h-12 w-auto mx-auto"
               />
             </div>
@@ -273,6 +286,18 @@ function Signup() {
               </div>
             </div>
 
+            {/* Debug Information */}
+            {debugInfo.length > 0 && (
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <h4 className="font-semibold text-gray-700 mb-2">Debug Information:</h4>
+                <div className="text-sm text-gray-600 space-y-1 max-h-32 overflow-y-auto">
+                  {debugInfo.map((info, index) => (
+                    <div key={index}>{info}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Error Message */}
             <AnimatePresence>
               {error && (
@@ -327,7 +352,10 @@ function Signup() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 kadam-body">
               Already have an account?{' '}
-              <Link to="/login" className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green">
+              <Link
+                to="/login"
+                className="kadam-body-medium text-kadam-deep-green hover:text-kadam-medium-green"
+              >
                 Sign in here
               </Link>
             </p>

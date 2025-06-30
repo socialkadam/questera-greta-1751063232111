@@ -48,6 +48,7 @@ function SignupWizard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [debugInfo, setDebugInfo] = useState([])
 
   // Form data
   const [formData, setFormData] = useState({
@@ -70,6 +71,12 @@ function SignupWizard() {
     languages: 'English',
     session_types: ['video']
   })
+
+  const addDebugInfo = (message) => {
+    const timestamp = new Date().toLocaleTimeString()
+    setDebugInfo(prev => [...prev, `[${timestamp}] ${message}`])
+    console.log(`[DEBUG] ${message}`)
+  }
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -166,11 +173,13 @@ function SignupWizard() {
 
     setLoading(true)
     setError('')
+    setDebugInfo([])
 
     try {
-      console.log('🚀 Starting wizard signup process...')
+      addDebugInfo('🚀 Starting wizard signup process...')
 
       // Step 1: Create user account
+      addDebugInfo('📧 Creating user account with email: ' + formData.email)
       const { data: authData, error: authError } = await authHelpers.signUp(
         formData.email,
         formData.password,
@@ -181,17 +190,18 @@ function SignupWizard() {
       )
 
       if (authError) {
-        console.error('❌ Auth error:', authError)
+        addDebugInfo('❌ Auth error: ' + authError.message)
         throw authError
       }
 
       if (!authData.user) {
-        throw new Error('Failed to create user account')
+        throw new Error('Failed to create user account - no user returned')
       }
 
-      console.log('✅ User account created successfully')
+      addDebugInfo('✅ User account created with ID: ' + authData.user.id)
 
       // Step 2: Create wizard profile
+      addDebugInfo('🧙‍♂️ Creating wizard profile...')
       const wizardData = {
         full_name: formData.full_name,
         wizard_type: formData.wizard_type,
@@ -211,11 +221,11 @@ function SignupWizard() {
       const { data: wizardResult, error: wizardError } = await wizardHelpers.createWizardProfile(wizardData)
 
       if (wizardError) {
-        console.error('❌ Wizard creation error:', wizardError)
+        addDebugInfo('❌ Wizard creation error: ' + wizardError.message)
         throw wizardError
       }
 
-      console.log('✅ Wizard profile created successfully:', wizardResult)
+      addDebugInfo('✅ Wizard profile created successfully')
 
       // Show success and auto-login
       setSuccess(true)
@@ -229,15 +239,18 @@ function SignupWizard() {
         status: 'pending'
       })
 
+      addDebugInfo('🎉 Signup completed successfully!')
+
       // Redirect after showing success
       setTimeout(() => {
         navigate('/wizard-pending-approval')
-      }, 2000)
+      }, 3000)
 
     } catch (err) {
+      addDebugInfo('❌ Signup failed: ' + err.message)
       console.error('❌ Wizard signup failed:', err)
       
-      // Handle specific errors
+      // Handle specific errors with more detail
       if (err.message?.includes('already registered') || err.message?.includes('already been registered')) {
         setError('An account with this email already exists. Please sign in instead.')
       } else if (err.message?.includes('Invalid email')) {
@@ -245,11 +258,15 @@ function SignupWizard() {
       } else if (err.message?.includes('Password')) {
         setError('Password must be at least 6 characters long.')
       } else if (err.message?.includes('row-level security') || err.message?.includes('RLS')) {
-        setError('There was a security issue creating your profile. Please try again or contact support.')
+        setError('Database security issue. Please contact support.')
       } else if (err.message?.includes('Database error')) {
-        setError('Database error saving new user. Please try again.')
+        setError('Database connection issue. Please try again.')
+      } else if (err.message?.includes('Failed to create user profile')) {
+        setError('Profile creation failed. Please try again or contact support.')
+      } else if (err.message?.includes('Failed to create wizard profile')) {
+        setError('Wizard profile creation failed. Please try again.')
       } else {
-        setError(err.message || 'Failed to create wizard account. Please try again.')
+        setError('Something went wrong: ' + err.message)
       }
     } finally {
       setLoading(false)
@@ -285,7 +302,7 @@ function SignupWizard() {
               Application Submitted!
             </h2>
             <p className="text-gray-600 kadam-body mb-6">
-              Your wizard application has been submitted successfully. You'll be redirected to the approval status page.
+              Your wizard application has been submitted successfully. Redirecting to approval status page...
             </p>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-kadam-deep-green mx-auto"></div>
           </div>
@@ -614,6 +631,18 @@ function SignupWizard() {
             {/* Form */}
             <form onSubmit={handleSubmit}>
               {renderStep()}
+
+              {/* Debug Information */}
+              {debugInfo.length > 0 && (
+                <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-4">
+                  <h4 className="font-semibold text-gray-700 mb-2">Debug Information:</h4>
+                  <div className="text-sm text-gray-600 space-y-1 max-h-32 overflow-y-auto">
+                    {debugInfo.map((info, index) => (
+                      <div key={index}>{info}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Error Message */}
               <AnimatePresence>
