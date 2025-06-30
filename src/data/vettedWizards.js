@@ -192,7 +192,7 @@ export const vettedWizards = [
       "mental health", "therapy", "depression", "mood", "emotional", "psychology",
       "mindfulness", "meditation", "relaxation", "coping", "healing"
     ],
-    lapsulaBookingUrl: "https://app.lapsula.com/shop/cmagu7td500007ea0p2x6ciko/embed-020617-facc15"
+    lapsulaBookingUrl: "https://app.lapsula.com/book/wizard-service-grnsw3nz2z0uv3kkckf0cp3p"
   },
   {
     id: 'counselor_003',

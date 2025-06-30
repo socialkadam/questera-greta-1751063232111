@@ -147,7 +147,7 @@ const allWizards = [
     tags: ["Anxiety Disorders", "Trauma Therapy", "PTSD", "Cognitive Behavioral Therapy"],
     bio: "Expert in treating anxiety disorders, panic attacks, and stress-related conditions.",
     availability: ["Video Call", "Phone", "Chat"],
-    lapsulaBookingUrl: "https://app.lapsula.com/shop/cmagu7td500007ea0p2x6ciko/embed-020617-facc15"
+    lapsulaBookingUrl: "https://app.lapsula.com/book/wizard-service-grnsw3nz2z0uv3kkckf0cp3p"
   },
   {
     id: 9,
